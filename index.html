@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Allocazione risorse V0.9</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery-3.5.1.min.js"></script>
+</head>
+
+<body id="body">
+
+    <div class="form-box">
+        <div id="step1" class="input-group">
+            <table>
+                <tr>
+                    <td>
+                        <input type="file" id="importa-dipendenti" hidden="hidden" /><br>
+                        <button type="button" id="aggiungi-dipendenti" class="basic-button">IMPORTA
+                            DIPENDENTI</button><br>
+                        <input type="file" id="importa-progetti" hidden="hidden" /><br>
+                        <button type="button" id="aggiungi-progetti" class="basic-button">IMPORTA
+                            PROGETTI</button>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <label for="birthday">Data di riferimento:</label>
+                        <input type="date" id="date">
+                        <br><br>
+                        <select id="lista-dipendenti" onchange="selezionaDipendente(this)">
+                            <option disabled selected value>Seleziona un dipendente</option>
+                        </select>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <br><br>
+                        <div id="dipendente-selezionato">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <br><br>
+            <table id="tabella-dipendenti">
+            </table>
+            <br><br>
+            <table id="tabella-allocazioni">
+            </table>
+        </div>
+    </div>
+
+    <div style="width: 100%; text-align: center; font-size: 12px; color: grey">&copy; 2021 ALM Enterprise. All Rights
+        Reserved.</div>
+
+    <script type="text/javascript">
+        var listaDipendentiPercentuali = [];
+        var listaProgetti = [];
+        var idDipendenteSelezionato;
+        var dipendenteGrabbato = null;
+
+        document.getElementById("aggiungi-dipendenti").addEventListener("click", function () {
+            document.getElementById("importa-dipendenti").click();
+        });
+
+        document.getElementById("aggiungi-progetti").addEventListener("click", function () {
+            document.getElementById("importa-progetti").click();
+        });
+
+        document.getElementById("importa-dipendenti").addEventListener("change", function () {
+            let file = document.getElementById("importa-dipendenti").files[0];
+            var reader = new FileReader();
+            reader.onload = readSuccess;
+            function readSuccess(evt) {
+                let listaDipendenti = evt.target.result.split('\n');
+
+                let idDipendente = 0;
+                listaDipendenti.shift();
+                listaDipendenti.forEach(function (rowDipendente) {
+                    let dipendente = rowDipendente.split(',');
+                    let nome = dipendente[0].toLowerCase();
+                    nome = nome[0].toUpperCase() + nome.slice(1);
+                    let cognome = dipendente[1].toLowerCase();
+                    cognome = cognome[0].toUpperCase() + cognome.slice(1);
+                    let anzianita = dipendente[2].toUpperCase().trim();
+                    let color = '';
+                    switch (anzianita) {
+                        case "SENIOR":
+                            color = 'BF0000';
+                            break;
+                        case "MIDDLE":
+                            color = 'BF7100';
+                            break;
+                        case "JUNIOR":
+                            color = 'BFBF00';
+                            break;
+                        default:
+                            break;
+                    }
+
+                    $('#lista-dipendenti').append(
+                        '<option value="' + idDipendente +
+                        '" style="color: #' + color + ';">' +
+                        nome + ' ' +
+                        cognome + ' ' +
+                        '[' + anzianita + ']' +
+                        '</option>'
+                    );
+
+                    listaDipendentiPercentuali.push({
+                        id: idDipendente,
+                        nome: nome,
+                        cognome: cognome,
+                        anzianita: anzianita,
+                        color: color,
+                        perc: 100
+                    });
+                    idDipendente++;
+                });
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById("importa-progetti").addEventListener("change", function () {
+            let file = document.getElementById("importa-progetti").files[0];
+            var reader = new FileReader();
+            reader.onload = readSuccess;
+            function readSuccess(evt) {
+                let progetti = evt.target.result.split('\n');
+                progetti.shift();
+                progetti.forEach(function (progetto) {
+                    listaProgetti.push(progetto.trim());
+                });
+                createTableAllocazioni(listaProgetti);
+            };
+            reader.readAsText(file);
+        });
+
+        function selezionaDipendente(dipendente) {
+            let idDipendente = dipendente.value;
+            let dipendenteSelezionato = listaDipendentiPercentuali.filter(function (dipendente) {
+                return dipendente.id == idDipendente;
+            })[0];
+
+            $('#lista-dipendenti').attr("style", "color: #" + dipendenteSelezionato.color + ";");
+            creaIconaDipendente(dipendenteSelezionato);
+        }
+
+        function creaIconaDipendente(dipendente) {
+            let matchesNome = dipendente.nome.match(/\b(\w)/g);
+            let matchesCognome = dipendente.cognome.match(/\b(\w)/g);
+            let siglaNome = matchesNome.join('').toUpperCase();
+            let siglaCognome = matchesCognome.join('').toUpperCase();
+            $('#dipendente-selezionato').html(siglaNome + siglaCognome + "<br><div class='perc'>" + dipendente.perc + "%</div>");
+            $('#dipendente-selezionato').css("background-color", '#' + dipendente.color);
+            idDipendenteSelezionato = dipendente.id;
+        }
+
+        $('#dipendente-selezionato').hover(
+            function () {
+                $('#dipendente-selezionato').css("opacity", "0.5");
+            }, function () {
+                $('#dipendente-selezionato').css("opacity", "1");
+            }
+        );
+
+        function createTableAllocazioni(listaProgetti) {
+            listaProgetti.forEach(function (progetto) {
+                $("#tabella-allocazioni").append(
+                    "<tr>" +
+                    "<td>" +
+                    progetto +
+                    "</td>" +
+                    "<td>" +
+                    "<input id='" + progetto.replace(/\s/g, '') + "' readonly>" +
+                    "</td>" +
+                    "</tr>"
+                );
+            });
+        }
+
+        function resetGrab() {
+            $('*').css('cursor', 'grab');
+            dipendenteGrabbato = null;
+        }
+
+        $("*").off().click(function(e) {
+            if(e.target.id == 'dipendente-selezionato' || $(e.target).parents('#dipendente-selezionato').length) {
+                $('*').css('cursor', 'grabbing');
+                dipendenteGrabbato = listaDipendentiPercentuali.filter(function (dipendente) {
+                    return dipendente.id == idDipendenteSelezionato;
+                })[0];
+            } else if(dipendenteGrabbato != null) {
+                listaProgetti.forEach(function (progetto) {
+                    progetto = progetto.replace(/\s/g, '');
+                    if(e.target.id == progetto || $(e.target).parents("#" + progetto).length) {
+                        $("#" + progetto).val(dipendenteGrabbato.nome);
+                        resetGrab();
+                    }
+                });
+            }
+        });
+
+    </script>
+</body>
+
+</html>

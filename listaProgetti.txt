@@ -1,0 +1,4 @@
+nome
+Capgemini Nexi IBK
+Corvallis Unicredit
+Almaviva Oauth
