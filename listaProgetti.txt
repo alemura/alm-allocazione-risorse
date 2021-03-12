@@ -1,4 +1,4 @@
-nome
-Capgemini Nexi IBK
-Corvallis Unicredit
-Almaviva Oauth
+nome,color
+Capgemini Nexi IBK,cornflowerblue
+Corvallis Unicredit,antiquewhite
+Almaviva Oauth,aliceblue
