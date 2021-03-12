@@ -49,11 +49,13 @@
         Reserved.</div>
 
     <script type="text/javascript">
+        /* VARIABILI GLOBALI */
         var listaDipendentiPercentuali = [];
         var listaProgetti = [];
         var idDipendenteSelezionato;
         var dipendenteGrabbato = null;
 
+        /* IMPORT DATI */
         document.getElementById("aggiungi-dipendenti").addEventListener("click", function () {
             document.getElementById("importa-dipendenti").click();
         });
@@ -109,24 +111,6 @@
             reader.readAsText(file);
         });
 
-        function aggiornaData(e) {
-            let data = e.target.value;
-            let d = data.slice(8, 10);
-            let m = data.slice(5, 7);
-            let y = data.slice(0, 4);
-            $('#date').text(d + "/" + m + "/" + y);
-        }
-
-        function aggiungiDipendenteListaDipendenti(dipendente) {
-            $("tr#lista-dipendenti").append(
-                "<td id='id" + dipendente.id + "'>" +
-                "<div id='id" + dipendente.id + "' class='icona-dipendente' style='background-color: #" + dipendente.color + "''>" +
-                creaIconaDipendente(dipendente, dipendente.perc) +
-                "</div>" +
-                "</td>"
-            );
-        }
-
         document.getElementById("importa-progetti").addEventListener("change", function () {
             let file = document.getElementById("importa-progetti").files[0];
             var reader = new FileReader();
@@ -149,12 +133,14 @@
             reader.readAsText(file);
         });
 
-        function creaIconaDipendente(dipendente, perc) {
-            let matchesNome = dipendente.nome.match(/\b(\w)/g);
-            let matchesCognome = dipendente.cognome.match(/\b(\w)/g);
-            let siglaNome = matchesNome.join('').toUpperCase();
-            let siglaCognome = matchesCognome.join('').toUpperCase();
-            return siglaNome + siglaCognome + "<br><div class='perc'>" + perc + "%</div>";
+        function aggiungiDipendenteListaDipendenti(dipendente) {
+            $("tr#lista-dipendenti").append(
+                "<td id='id" + dipendente.id + "'>" +
+                "<div id='id" + dipendente.id + "' class='icona-dipendente' style='background-color: #" + dipendente.color + "''>" +
+                creaIconaDipendente(dipendente, dipendente.perc) +
+                "</div>" +
+                "</td>"
+            );
         }
 
         function createTableAllocazioni(listaProgetti) {
@@ -169,15 +155,17 @@
             });
         }
 
-        function resetGrab() {
-            $('body').css('cursor', 'grab');
-            dipendenteGrabbato = null;
-        }
 
+        /* UTILS */
         function getDipendenteFromId(id) {
             return listaDipendentiPercentuali.filter(function (dipendente) {
                 return dipendente.id == id;
             })[0];
+        }
+
+        function resetGrab() {
+            $('body').css('cursor', 'grab');
+            dipendenteGrabbato = null;
         }
 
         function aggiornaDipendenteListaDipendenti(dipendente, perc) {
@@ -185,51 +173,80 @@
             $('tr#lista-dipendenti > td > div#id' + dipendente.id + ' > div.perc').text(dipendente.perc + "%");
         }
 
+        function creaIconaDipendente(dipendente, perc) {
+            let matchesNome = dipendente.nome.match(/\b(\w)/g);
+            let matchesCognome = dipendente.cognome.match(/\b(\w)/g);
+            let siglaNome = matchesNome.join('').toUpperCase();
+            let siglaCognome = matchesCognome.join('').toUpperCase();
+            return siglaNome + siglaCognome + "<br><div class='perc'>" + perc + "%</div>";
+        }
+
+        function aggiornaData(e) {
+            let data = e.target.value;
+            let d = data.slice(8, 10);
+            let m = data.slice(5, 7);
+            let y = data.slice(0, 4);
+            $('#date').text(d + "/" + m + "/" + y);
+        }
+
+
+        /* INTERAZIONE MOUSE */
         $("body").click(function (e) {
             if (e.target.id.slice(0, 2) == 'id' && $(e.target).parents('table#tabella-allocazioni').length == 0) {
-                $('body').css('cursor', 'grabbing');
-                idDipendenteSelezionato = e.target.id.slice(2, e.target.id.length);
-                dipendenteGrabbato = getDipendenteFromId(idDipendenteSelezionato);
+                selezionaDipendenteDaAllocare(e);
             } else if (e.target.id.slice(0, 2) == 'id' && $(e.target).parents('table#tabella-allocazioni').length > 0) {
-                let flagYesNo = confirm("Vuoi rimuovere l'allocazione?");
-                if (flagYesNo) {
-                    $(e.target).parents("tr > td").remove();
-                    let dipendente = getDipendenteFromId(e.target.id.slice(2, e.target.id.length));
-                    if (dipendente.perc == 0) {
-                        dipendente.perc = e.target.getElementsByClassName("perc")[0].innerHTML.slice(0, -1);
-                        aggiungiDipendenteListaDipendenti(dipendente);
-                    } else {
-                        let perc = e.target.getElementsByClassName("perc")[0].innerHTML.slice(0, -1);
-                        aggiornaDipendenteListaDipendenti(dipendente, perc);
-                    }
-                }
+                rimuoviAllocazioneDipendente(e);
             } else if (dipendenteGrabbato != null) {
-                listaProgetti.forEach(function (progetto) {
-                    progetto = progetto.nomeProgetto.replace(/\s/g, '');
-                    if (e.target.id == 'row' + progetto || $(e.target).parents("#row" + progetto).length) {
-                        let perc = prompt('Inserisci la percentuale allocazione');
-                        perc = perc ? perc : dipendenteGrabbato.perc;
-                        $("#tabella-allocazioni > tr#row" + progetto).append(
-                            "<td id='id" + dipendenteGrabbato.id + "'>" +
-                            "<div id='id" + dipendenteGrabbato.id + "' class='icona-dipendente' " +
-                            "style='background-color: #" + dipendenteGrabbato.color + "'>" +
-                            creaIconaDipendente(dipendenteGrabbato, perc) +
-                            "</div>" +
-                            "</td>"
-                        );
-                        if (perc == dipendenteGrabbato.perc) {
-                            $('tr#lista-dipendenti > td#id' + dipendenteGrabbato.id).remove();
-                            dipendenteGrabbato.perc = 0;
-                        } else {
-                            dipendenteGrabbato.perc -= perc;
-                            $('tr#lista-dipendenti > td > div#id' + dipendenteGrabbato.id + ' > div.perc').text(dipendenteGrabbato.perc + '%');
-                        }
-                        resetGrab();
-                    }
-                });
+                allocaDipendente(e);
             }
         });
 
+        function selezionaDipendenteDaAllocare(e) {
+            $('body').css('cursor', 'grabbing');
+            idDipendenteSelezionato = e.target.id.slice(2, e.target.id.length);
+            dipendenteGrabbato = getDipendenteFromId(idDipendenteSelezionato);
+        }
+
+        function rimuoviAllocazioneDipendente(e) {
+            let flagYesNo = confirm("Vuoi rimuovere l'allocazione?");
+            if (flagYesNo) {
+                $(e.target).parents("tr > td").remove();
+                let dipendente = getDipendenteFromId(e.target.id.slice(2, e.target.id.length));
+                if (dipendente.perc == 0) {
+                    dipendente.perc = e.target.getElementsByClassName("perc")[0].innerHTML.slice(0, -1);
+                    aggiungiDipendenteListaDipendenti(dipendente);
+                } else {
+                    let perc = e.target.getElementsByClassName("perc")[0].innerHTML.slice(0, -1);
+                    aggiornaDipendenteListaDipendenti(dipendente, perc);
+                }
+            }
+        }
+
+        function allocaDipendente(e) {
+            listaProgetti.forEach(function (progetto) {
+                progetto = progetto.nomeProgetto.replace(/\s/g, '');
+                if (e.target.id == 'row' + progetto || $(e.target).parents("#row" + progetto).length) {
+                    let perc = prompt('Inserisci la percentuale allocazione');
+                    perc = perc ? perc : dipendenteGrabbato.perc;
+                    $("#tabella-allocazioni > tr#row" + progetto).append(
+                        "<td id='id" + dipendenteGrabbato.id + "'>" +
+                        "<div id='id" + dipendenteGrabbato.id + "' class='icona-dipendente' " +
+                        "style='background-color: #" + dipendenteGrabbato.color + "'>" +
+                        creaIconaDipendente(dipendenteGrabbato, perc) +
+                        "</div>" +
+                        "</td>"
+                    );
+                    if (perc == dipendenteGrabbato.perc) {
+                        $('tr#lista-dipendenti > td#id' + dipendenteGrabbato.id).remove();
+                        dipendenteGrabbato.perc = 0;
+                    } else {
+                        dipendenteGrabbato.perc -= perc;
+                        $('tr#lista-dipendenti > td > div#id' + dipendenteGrabbato.id + ' > div.perc').text(dipendenteGrabbato.perc + '%');
+                    }
+                    resetGrab();
+                }
+            });
+        }
     </script>
 </body>
 
