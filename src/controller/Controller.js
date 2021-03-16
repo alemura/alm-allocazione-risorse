@@ -2,24 +2,86 @@
 var state = new State();
 var dipendenteGrabbato = null;
 
-$(document).on('mousemove', function(e){
-    if(dipendenteGrabbato == null)
+$(document).on('mousemove', function (e) {
+    if (dipendenteGrabbato == null)
         return
 
     $('tr#lista-dipendenti > td > div#id' + dipendenteGrabbato.id).css({
-       left:  e.pageX - 40,
-       top:   e.pageY - 25,
-       position: "absolute"
+        left: e.pageX - 40,
+        top: e.pageY - 25,
+        position: "absolute"
     });
 });
 
+function refreshPage() {
+    state.listaProgetti.forEach(function (progetto) {
+        let htmlDipendentiAllocati = '';
+        progetto.listaDipendentiAllocati.forEach(function (dipendente) {
+            htmlDipendentiAllocati += "<td id='id" + dipendente.id + "'>" +
+                "<div id='id" + dipendente.id + "' class='icona-dipendente' " +
+                "style='background-color: #" + dipendente.colore + "'>" +
+                Utils.creaIconaDipendente(dipendente, dipendente.perc) +
+                "</div>" +
+                "</td>";
+        });
+        $("#tabella-allocazioni").append(
+            "<tr id='row" + progetto.nome.replace(/\s/g, '') + "'>" +
+            "<td id='nome-progetto' style='background-color: " + progetto.colore + "'>&nbsp;&nbsp;" +
+            progetto.nome +
+            "&nbsp;&nbsp;</td>" +
+            htmlDipendentiAllocati +
+            "</tr>"
+        );
+    });
+    state.listaDipendentiNonAllocati.forEach(function (dipendente) {
+        aggiungiDipendenteListaDipendenti(dipendente);
+    });
+}
+
 /* IMPORT DATI */
-document.getElementById("aggiungi-dipendenti").addEventListener("click", function () {
-    document.getElementById("importa-dipendenti").click();
+document.getElementById("carica").addEventListener("click", function () {
+    document.getElementById("carica-file").click();
+});
+
+document.getElementById("carica-file").addEventListener("change", function () {
+    let file = document.getElementById("carica-file").files[0];
+    var reader = new FileReader();
+    reader.onload = readSuccess;
+    function readSuccess(evt) {
+        let data = JSON.parse(evt.target.result);
+        state.data = data.data;
+        state.listaDipendentiNonAllocati = data.listaDipendentiNonAllocati;
+        state.listaProgetti = data.listaProgetti;
+        refreshPage();
+    };
+    reader.readAsText(file);
 });
 
 document.getElementById("aggiungi-progetti").addEventListener("click", function () {
     document.getElementById("importa-progetti").click();
+});
+
+document.getElementById("importa-progetti").addEventListener("change", function () {
+    let file = document.getElementById("importa-progetti").files[0];
+    var reader = new FileReader();
+    reader.onload = readSuccess;
+    function readSuccess(evt) {
+        let progetti = evt.target.result.split('\n');
+        progetti.shift();
+        progetti.forEach(function (progettoRow) {
+            let progetto = progettoRow.split(',');
+            let nomeProgetto = progetto[0].trim();
+            let color = progetto[1].trim();
+            progetto = new Progetto(nomeProgetto, color);
+            state.listaProgetti.push(progetto);
+        });
+        createTableAllocazioni(state.listaProgetti);
+    };
+    reader.readAsText(file);
+});
+
+document.getElementById("aggiungi-dipendenti").addEventListener("click", function () {
+    document.getElementById("importa-dipendenti").click();
 });
 
 document.getElementById("importa-dipendenti").addEventListener("change", function () {
@@ -58,25 +120,6 @@ document.getElementById("importa-dipendenti").addEventListener("change", functio
             aggiungiDipendenteListaDipendenti(dipendente);
             idDipendente++;
         });
-    };
-    reader.readAsText(file);
-});
-
-document.getElementById("importa-progetti").addEventListener("change", function () {
-    let file = document.getElementById("importa-progetti").files[0];
-    var reader = new FileReader();
-    reader.onload = readSuccess;
-    function readSuccess(evt) {
-        let progetti = evt.target.result.split('\n');
-        progetti.shift();
-        progetti.forEach(function (progettoRow) {
-            let progetto = progettoRow.split(',');
-            let nomeProgetto = progetto[0].trim();
-            let color = progetto[1].trim();
-            progetto = new Progetto(nomeProgetto, color);
-            state.listaProgetti.push(progetto);
-        });
-        createTableAllocazioni(state.listaProgetti);
     };
     reader.readAsText(file);
 });
@@ -123,23 +166,18 @@ function selezionaDipendenteDaAllocare(e) {
 function rimuoviAllocazioneDipendente(e) {
     let flagYesNo = confirm("Vuoi rimuovere l'allocazione?");
     if (flagYesNo) {
-        let dipendente = null;
-        for(i = 0; i < state.listaProgetti.length; i++) {
-            let progetto = state.listaProgetti[i];
-            dipendente = Utils.getDipendenteFromId(progetto.listaDipendentiAllocati, e.target.id.slice(2, e.target.id.length));
-            if(dipendente)
-                break;
+        let idDipendente = e.target.id.slice(2, e.target.id.length);
+        let progettoSelezionato = Utils.getProgettoFromNome(state.listaProgetti, e.target.parentElement.parentElement.id.slice(3));
+        let dipendenteAllocato = Utils.getDipendenteFromId(progettoSelezionato.listaDipendentiAllocati, idDipendente);
+        let dipendenteNonAllocato = Utils.getDipendenteFromId(state.listaDipendentiNonAllocati, idDipendente);
+        if (dipendenteNonAllocato) {
+            Utils.aggiornaDipendenteListaDipendenti(dipendenteNonAllocato, dipendenteAllocato.perc);
+        } else {            
+            aggiungiDipendenteListaDipendenti(dipendenteAllocato);
+            state.listaDipendentiNonAllocati.push(dipendenteAllocato);
         }
         $(e.target).parents("tr > td").remove();
-        if (dipendente.perc == 0) {
-            dipendente.perc = e.target.getElementsByClassName("perc")[0].innerHTML.slice(0, -1);
-            aggiungiDipendenteListaDipendenti(dipendente);
-            Utils.removeDipendenteFromProgetto(state.listaProgetti, dipendente.id);
-        } else {
-            let perc = e.target.getElementsByClassName("perc")[0].innerHTML.slice(0, -1);
-            Utils.aggiornaDipendenteListaDipendenti(dipendente, perc);
-            Utils.removeDipendenteFromProgetto(state.listaProgetti, dipendente.id);
-        }
+        Utils.removeDipendenteFromProgetto(idDipendente, progettoSelezionato);
     }
 }
 
@@ -147,11 +185,14 @@ function allocaDipendente(e) {
     state.listaProgetti.forEach(function (progetto) {
         let nomeProgetto = progetto.nome.replace(/\s/g, '');
         if (e.target.id == 'row' + nomeProgetto || $(e.target).parents("#row" + nomeProgetto).length) {
-            if(progetto.listaDipendentiAllocati.findIndex(dipendente => dipendente.id == dipendenteGrabbato.id) > -1)
+            if (progetto.listaDipendentiAllocati.findIndex(dipendente => dipendente.id == dipendenteGrabbato.id) > -1)
                 return
 
             let perc = prompt('Inserisci la percentuale allocazione');
-            perc = perc ? perc : dipendenteGrabbato.perc;
+            if(perc == null || perc > 100 || !(/^\d+$/.test(perc))) {
+                perc = dipendenteGrabbato.perc
+            }
+
             $("#tabella-allocazioni > tr#row" + nomeProgetto).append(
                 "<td id='id" + dipendenteGrabbato.id + "'>" +
                 "<div id='id" + dipendenteGrabbato.id + "' class='icona-dipendente' " +
@@ -160,18 +201,41 @@ function allocaDipendente(e) {
                 "</div>" +
                 "</td>"
             );
+
+            let newDip = new Dipendente();
+            newDip.id = dipendenteGrabbato.id;
+            newDip.nome = dipendenteGrabbato.nome;
+            newDip.cognome = dipendenteGrabbato.cognome;
+            newDip.anzianita = dipendenteGrabbato.anzianita;
+            newDip.colore = dipendenteGrabbato.colore;
+            newDip.perc = perc;
+            progetto.listaDipendentiAllocati.push(newDip);
+            
             if (perc == dipendenteGrabbato.perc) {
                 $('tr#lista-dipendenti > td#id' + dipendenteGrabbato.id).remove();
-                dipendenteGrabbato.perc = 0;
-                progetto.listaDipendentiAllocati.push(dipendenteGrabbato);
                 Utils.removeDipendenteFromDipendentiNonAllocati(state.listaDipendentiNonAllocati, dipendenteGrabbato.id);
             } else {
                 dipendenteGrabbato.perc -= perc;
                 $('tr#lista-dipendenti > td > div#id' + dipendenteGrabbato.id + ' > div.perc').text(dipendenteGrabbato.perc + '%');
-                progetto.listaDipendentiAllocati.push(dipendenteGrabbato);
             }
-
             dipendenteGrabbato = Utils.resetGrab(dipendenteGrabbato);
         }
     });
+}
+
+function salva() {
+    let filename = "import_allocazioni_" + Date.now();
+    state.data = $('#date').text();
+    let data = JSON.stringify(state);
+    let file = new Blob([data], { type: 'txt' });
+    let a = document.createElement("a");
+    let url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 0);
 }

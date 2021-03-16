@@ -21,6 +21,12 @@ class Utils {
         })[0];
     }
 
+    static getProgettoFromNome(listaProgetti, nomeProgetto) {
+        return listaProgetti.filter(function (progetto) {
+            return progetto.nome.replace(/\s/g, '') == nomeProgetto;
+        })[0];
+    }
+
     static resetGrab(dipendenteGrabbato) {
         $('body').css('cursor', 'grab');
         $('div#id' + dipendenteGrabbato.id).css('position','static');
@@ -32,12 +38,9 @@ class Utils {
         $('tr#lista-dipendenti > td > div#id' + dipendente.id + ' > div.perc').text(dipendente.perc + "%");
     }
 
-    static removeDipendenteFromProgetto(listaProgetti, idDipendente) {
-        listaProgetti.forEach(function (progetto) {
-            let index = progetto.listaDipendentiAllocati.findIndex(dipendente => dipendente.id == idDipendente);
-            if(index > -1)
-                progetto.listaDipendentiAllocati.splice(index, 1);
-        });
+    static removeDipendenteFromProgetto(idDipendente, progetto) {
+        let index = progetto.listaDipendentiAllocati.findIndex(dipendente => dipendente.id == idDipendente);
+        progetto.listaDipendentiAllocati.splice(index, 1);
     }
 
     static removeDipendenteFromDipendentiNonAllocati(listaDipendentiNonAllocati, idDipendente) {

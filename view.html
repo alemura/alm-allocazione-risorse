@@ -22,11 +22,14 @@
                             PROGETTI</button>
                     </td>
                     <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <br>
+                        <button type="button" class="basic-button" onclick="salva()">SALVA</button><br><br>
+                        <input type="file" id="carica-file" hidden="hidden" />
+                        <button type="button" id="carica" class="basic-button">CARICA</button>
                     </td>
                     <td>
-                        <label for="birthday">Data di riferimento:</label>
-                        <input type="date" onchange="Utils.aggiornaData(event);">
+                        &nbsp;<label for="birthday">Data di riferimento:</label>
+                        &nbsp;<input type="date" onchange="Utils.aggiornaData(event);">
                     </td>
                 </tr>
             </table>
