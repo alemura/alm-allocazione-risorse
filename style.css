@@ -8,20 +8,29 @@ body {
     cursor: grab;
 }
 
-.form-box {
-    height: 580px;
+.container-left {
+    height: 1500px;
     position: relative;
-    margin: 6% auto;
     background: #fff;
-    padding: 5px;
+    float: left;
+    width: 50%;
     margin-top: -150px;
+}
+
+.container-right {
+    height: 1500px;
+    position: relative;
+    background: #fff;
+    float: left;
+    width: 50%;
 }
 
 .basic-button {
     top: 0;
     left: 0;
     font-weight: bold;
-    width: 130px;
+    font-size: 11px;
+    width: 120px;
     height: 40px;
     background: linear-gradient(to right, #ff105f, #ffad06);
     transition: .5s;
@@ -66,9 +75,11 @@ body {
 }
 
 div.icona-dipendente {
+    border-radius: 20px;
     text-align: center;
     font-size: 22px;
     opacity: 1;
+    padding: 2px 8px 2px 8px;
 }
 
 div.icona-dipendente:hover {
@@ -80,13 +91,15 @@ div.icona-dipendente:hover {
 }
 
 div.perc {
-    font-size: 10px;
+    border-radius: 20px;
+    font-size: 12px;
     background-color: #ffad06;
-    padding: 2px 20px 2px 20px;
+    padding: 2px 10px 2px 10px;
     font-weight: bold;
 }
 
-#tabella-allocazioni td {
+#tabella-allocazioni td#nome-progetto {
+    font-weight: bold;
     border: 1px solid #000;
 }
 
@@ -127,4 +140,14 @@ div.perc {
     color: #000;
     text-decoration: none;
     cursor: pointer;
+}
+
+.footer {
+    width: 100%;
+    margin-top: 50px;
+    position: relative;
+    float: left;
+    text-align: center;
+    font-size: 12px;
+    color: grey;
 }

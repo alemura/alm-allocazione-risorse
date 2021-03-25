@@ -19,10 +19,11 @@ function refreshPage() {
     state.listaProgetti.forEach(function (progetto) {
         let htmlDipendentiAllocati = '';
         progetto.listaDipendentiAllocati.forEach(function (dipendente) {
-            let borderColor = dipendente.appartenenza == "internal" ? "; border: 2px solid blue" : "; border: 2px solid red";
+            let borderColor = dipendente.appartenenza == "internal" ? "; border: 3px solid #000" : "; border: 3px solid #00f9ff";
+            let style = dipendente.nome == "?" ? "style='border: 3px dashed #000'>" : "style='background-color: #" + dipendente.colore + borderColor + "'>";
             htmlDipendentiAllocati += "<td id='id" + dipendente.id + "'>" +
                 "<div id='id" + dipendente.id + "' class='icona-dipendente' " +
-                "style='background-color: #" + dipendente.colore + borderColor + "'>" +
+                style +
                 Utils.creaIconaDipendente(dipendente, dipendente.perc) +
                 "</div>" +
                 "</td>";
@@ -60,66 +61,13 @@ document.getElementById("carica-file").addEventListener("change", function () {
     };
     reader.readAsText(file);
 });
-/*
-document.getElementById("aggiungi-progetti").addEventListener("click", function () {
-    document.getElementById("importa-progetti").click();
-});
 
-document.getElementById("importa-progetti").addEventListener("change", function () {
-    let file = document.getElementById("importa-progetti").files[0];
-    var reader = new FileReader();
-    reader.onload = readSuccess;
-    function readSuccess(evt) {
-        let progetti = evt.target.result.split('\n');
-        progetti.shift();
-        progetti.forEach(function (progettoRow) {
-            let progetto = progettoRow.split(',');
-            let nomeProgetto = progetto[0].trim();
-            let color = progetto[1].trim();
-            progetto = new Progetto(nomeProgetto, color);
-            state.listaProgetti.push(progetto);
-        });
-        createTableAllocazioni(state.listaProgetti);
-    };
-    reader.readAsText(file);
-});
-
-document.getElementById("aggiungi-dipendenti").addEventListener("click", function () {
-    document.getElementById("importa-dipendenti").click();
-});
-
-document.getElementById("importa-dipendenti").addEventListener("change", function () {
-    let file = document.getElementById("importa-dipendenti").files[0];
-    var reader = new FileReader();
-    reader.onload = readSuccess;
-    function readSuccess(evt) {
-        let listaDipendenti = evt.target.result.split('\n');
-
-        let idDipendente = 0;
-        listaDipendenti.shift();
-        listaDipendenti.forEach(function (rowDipendente) {
-            let dipendente = rowDipendente.split(',');
-            let nome = dipendente[0].toLowerCase();
-            nome = nome[0].toUpperCase() + nome.slice(1);
-            let cognome = dipendente[1].toLowerCase();
-            cognome = cognome[0].toUpperCase() + cognome.slice(1);
-            let anzianita = dipendente[2].toUpperCase().trim();
-            let color = Utils.getColorFromAnzianita(anzianita);
-
-            dipendente = new Dipendente(idDipendente, nome, cognome, anzianita, color, 100);
-            state.listaDipendentiNonAllocati.push(dipendente);
-            aggiungiDipendenteListaDipendenti(dipendente);
-            idDipendente++;
-        });
-    };
-    reader.readAsText(file);
-});
-*/
 function aggiungiDipendenteListaDipendenti(dipendente) {
-    let borderColor = dipendente.appartenenza == "internal" ? "; border: 2px solid blue" : "; border: 2px solid red";
+    let borderColor = dipendente.appartenenza == "internal" ? "; border: 3px solid #000" : "; border: 3px solid #00f9ff";
+    let style = dipendente.nome == "?" ? "style='border: 3px dashed #000'" : "style='background-color: #" + dipendente.colore + borderColor + "'";
     $("tr#lista-dipendenti").append(
         "<td id='id" + dipendente.id + "'>" +
-        "<div id='id" + dipendente.id + "' class='icona-dipendente' style='background-color: #" + dipendente.colore + borderColor + "'>" +
+        "<div id='id" + dipendente.id + "' class='icona-dipendente' " + style + ">" +
         Utils.creaIconaDipendente(dipendente, dipendente.perc) +
         "</div>" +
         "</td>"
@@ -128,13 +76,7 @@ function aggiungiDipendenteListaDipendenti(dipendente) {
 
 function createTableAllocazioni(listaProgetti) {
     listaProgetti.forEach(function (progetto) {
-        $("#tabella-allocazioni").append(
-            "<tr id='row" + progetto.nome.replace(/\s/g, '') + "'>" +
-            "<td id='nome-progetto' style='background-color: " + progetto.colore + "'>&nbsp;&nbsp;" +
-            progetto.nome +
-            "&nbsp;&nbsp;</td>" +
-            "</tr>"
-        );
+        aggiungiProgettoTableAllocazioni(progetto);
     });
 }
 
@@ -162,6 +104,12 @@ function rimuoviAllocazioneDipendente(e) {
         let progettoSelezionato = Utils.getProgettoFromNome(state.listaProgetti, e.target.parentElement.parentElement.id.slice(3));
         let dipendenteAllocato = Utils.getDipendenteFromId(progettoSelezionato.listaDipendentiAllocati, idDipendente);
         let dipendenteNonAllocato = Utils.getDipendenteFromId(state.listaDipendentiNonAllocati, idDipendente);
+        if (dipendenteAllocato.nome == "?") {
+            $(e.target).parents("tr > td").remove();
+            Utils.removeDipendenteFromProgetto(idDipendente, progettoSelezionato);
+            return;
+        }
+
         if (dipendenteNonAllocato) {
             Utils.aggiornaDipendenteListaDipendenti(dipendenteNonAllocato, dipendenteAllocato.perc);
         } else {
@@ -185,7 +133,30 @@ function allocaDipendente(e) {
                 perc = dipendenteGrabbato.perc
             }
 
-            let borderColor = dipendenteGrabbato.appartenenza == "internal" ? "; border: 2px solid blue" : "; border: 2px solid red";
+            let allocationDip = new Dipendente(
+                dipendenteGrabbato.id,
+                dipendenteGrabbato.nome,
+                dipendenteGrabbato.cognome,
+                dipendenteGrabbato.anzianita,
+                dipendenteGrabbato.colore,
+                perc,
+                dipendenteGrabbato.appartenenza
+            );
+
+            if (dipendenteGrabbato.nome == "?") {
+                $("#tabella-allocazioni > tr#row" + nomeProgetto).append(
+                    "<td id='id" + dipendenteGrabbato.id + "'>" +
+                    "<div id='id" + dipendenteGrabbato.id + "' class='icona-dipendente' style='border: 3px dashed #000'>" +
+                    Utils.creaIconaDipendente(dipendenteGrabbato, perc) +
+                    "</div>" +
+                    "</td>"
+                );
+                progetto.listaDipendentiAllocati.push(allocationDip);
+                dipendenteGrabbato = Utils.resetGrab(dipendenteGrabbato);
+                return;
+            }
+
+            let borderColor = dipendenteGrabbato.appartenenza == "internal" ? "; border: 3px solid #000" : "; border: 3px solid #00f9ff";
             $("#tabella-allocazioni > tr#row" + nomeProgetto).append(
                 "<td id='id" + dipendenteGrabbato.id + "'>" +
                 "<div id='id" + dipendenteGrabbato.id + "' class='icona-dipendente' " +
@@ -195,15 +166,7 @@ function allocaDipendente(e) {
                 "</td>"
             );
 
-            let newDip = new Dipendente();
-            newDip.id = dipendenteGrabbato.id;
-            newDip.nome = dipendenteGrabbato.nome;
-            newDip.cognome = dipendenteGrabbato.cognome;
-            newDip.anzianita = dipendenteGrabbato.anzianita;
-            newDip.colore = dipendenteGrabbato.colore;
-            newDip.perc = perc;
-            newDip.appartenenza = dipendenteGrabbato.appartenenza;
-            progetto.listaDipendentiAllocati.push(newDip);
+            progetto.listaDipendentiAllocati.push(allocationDip);
 
             if (perc == dipendenteGrabbato.perc) {
                 $('tr#lista-dipendenti > td#id' + dipendenteGrabbato.id).remove();
@@ -234,6 +197,11 @@ function salva() {
     }, 0);
 }
 
+$("#annulla").click(function (e) {
+    if (dipendenteGrabbato == null)
+        return;
+    dipendenteGrabbato = Utils.resetGrab(dipendenteGrabbato);
+});
 
 /* AGGIUNGI PROGETTO */
 document.getElementById("aggiungi-progetto").addEventListener("click", function (event) {
@@ -264,10 +232,22 @@ document.getElementById("aggiungi-dipendente").addEventListener("click", functio
     let cognomeNuovoDipendente = $("#cognome-nuovo-dipendente").val().trim();
     let anzianita = $("#anzianita-nuovo-dipendente").children("option:selected").val();
     let appartenenza = $("#appartenenza-nuovo-dipendente").children("option:selected").val();
-    let idDipedente = Utils.getNewIdDipendente(state.listaProgetti, state.listaDipendentiNonAllocati);
+    let idDipendente = Utils.getNewIdDipendente(state.listaProgetti, state.listaDipendentiNonAllocati);
+
+    if (Utils.getDipendenteFromId(state.listaDipendentiNonAllocati, -1) == null) {
+        let emptyDipendente = new Dipendente(-1, "?", "?", "", "grey", 10000, "");
+        state.listaDipendentiNonAllocati.push(emptyDipendente);
+        $("tr#lista-dipendenti").append(
+            "<td id='id" + emptyDipendente.id + "'>" +
+            "<div id='id" + emptyDipendente.id + "' class='icona-dipendente' style='border: 3px dashed #000'>" +
+            Utils.creaIconaDipendente(emptyDipendente, emptyDipendente.perc) +
+            "</div>" +
+            "</td>"
+        );
+    }
 
     let dipendente = new Dipendente(
-        idDipedente,
+        idDipendente,
         nomeNuovoDipendente,
         cognomeNuovoDipendente,
         anzianita,

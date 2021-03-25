@@ -9,6 +9,9 @@ class Utils {
 
     static creaIconaDipendente(dipendente, perc) {
         let matchesNome = dipendente.nome.match(/\b(\w)/g);
+        if (matchesNome == null || matchesNome == "?") {
+            return "?" + "<br><div class='perc'>&nbsp&nbsp&nbsp&nbsp&nbsp</div>";
+        }
         let matchesCognome = dipendente.cognome.match(/\b(\w)/g);
         let siglaNome = matchesNome.join('').toUpperCase();
         let siglaCognome = matchesCognome.join('').toUpperCase();
@@ -64,6 +67,9 @@ class Utils {
     static getColorFromAnzianita(anzianita) {
         let color = '';
         switch (anzianita.toUpperCase().trim()) {
+            case "TIROCINANTE":
+                color = "C4C4C4";
+                break;
             case "SENIOR":
                 color = 'BF0000';
                 break;
