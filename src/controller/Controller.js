@@ -89,6 +89,8 @@ $("body").click(function (e) {
         rimuoviAllocazioneDipendente(e);
     } else if (dipendenteGrabbato != null) {
         allocaDipendente(e);
+    } else if (dipendenteGrabbato == null && e.target.id == "nome-progetto") {
+        confirm("Vuoi eliminare il progetto? (TODO: WORK IN PROGRESS)");
     }
 });
 
