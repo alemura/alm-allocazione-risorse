@@ -47,4 +47,36 @@ class Utils {
         let index = listaDipendentiNonAllocati.findIndex(dipendente => dipendente.id == idDipendente);
         listaDipendentiNonAllocati.splice(index, 1);
     }
+
+    static getNewIdDipendente(listaProgetti, listaDipendentiNonAllocati) {
+        let id = 0;
+        listaProgetti.forEach(function (progetto) {
+            progetto.listaDipendentiAllocati.forEach(function (dipendente) {
+                id = id < dipendente.id ? dipendente.id : id;
+            });
+        });
+        listaDipendentiNonAllocati.forEach(function (dipendente) {
+            id = id < dipendente.id ? dipendente.id : id;
+        });
+        return id + 1;
+    }
+
+    static getColorFromAnzianita(anzianita) {
+        let color = '';
+        switch (anzianita.toUpperCase().trim()) {
+            case "SENIOR":
+                color = 'BF0000';
+                break;
+            case "MIDDLE":
+                color = 'BF7100';
+                break;
+            case "JUNIOR":
+                color = 'BFBF00';
+                break;
+            default:
+                break;
+        }
+        
+        return color;
+    }
 }
