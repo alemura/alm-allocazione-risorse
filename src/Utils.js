@@ -27,10 +27,30 @@ class Utils {
         })[0];
     }
 
-    static getProgettoFromNome(listaProgetti, nomeProgetto) {
+    static getProgettoByNome(listaProgetti, nomeProgetto) {
         return listaProgetti.filter(function (progetto) {
             return progetto.nome.replace(/\s/g, '') == nomeProgetto;
         })[0];
+    }
+
+    static eliminaProgettoByNome(listaProgetti, nomeProgetto, listaDipendentiNonAllocati) {
+        let index = listaProgetti.findIndex(progetto => progetto.nome == nomeProgetto);
+        if(index == -1)
+            return;
+
+        let listaDipendentiAllocati = listaProgetti[index].listaDipendentiAllocati;
+        if(listaDipendentiAllocati.length > 0) {
+            listaDipendentiAllocati.forEach(function(dipendente) {
+                let indexDipendenteNonAllocato = listaDipendentiNonAllocati.findIndex(dip => dip.id == dipendente.id);
+                if(indexDipendenteNonAllocato == -1) {
+                    listaDipendentiNonAllocati.push(dipendente);
+                } else {
+                    listaDipendentiNonAllocati[indexDipendenteNonAllocato].perc = parseInt(listaDipendentiNonAllocati[indexDipendenteNonAllocato].perc) + parseInt(dipendente.perc);
+                }
+            });
+        }
+        
+        listaProgetti.splice(index, 1);
     }
 
     static resetGrab(dipendenteGrabbato) {

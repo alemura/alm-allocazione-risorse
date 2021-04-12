@@ -92,7 +92,9 @@ $("body").click(function (e) {
     } else if (dipendenteGrabbato != null) {
         allocaDipendente(e);
     } else if (dipendenteGrabbato == null && e.target.id == "nome-progetto") {
-        confirm("Vuoi eliminare il progetto? (TODO: WORK IN PROGRESS)");
+        let confermaCancellazione = confirm("Vuoi eliminare il progetto?");
+        if(confermaCancellazione)
+            eliminaProgetto(e);
     }
 });
 
@@ -105,7 +107,7 @@ function rimuoviAllocazioneDipendente(e) {
     let flagYesNo = confirm("Vuoi rimuovere l'allocazione?");
     if (flagYesNo) {
         let idDipendente = e.target.id.slice(2, e.target.id.length);
-        let progettoSelezionato = Utils.getProgettoFromNome(state.listaProgetti, e.target.parentElement.parentElement.id.slice(3));
+        let progettoSelezionato = Utils.getProgettoByNome(state.listaProgetti, e.target.parentElement.parentElement.id.slice(3));
         let dipendenteAllocato = Utils.getDipendenteFromId(progettoSelezionato.listaDipendentiAllocati, idDipendente);
         let dipendenteNonAllocato = Utils.getDipendenteFromId(state.listaDipendentiNonAllocati, idDipendente);
         if (dipendenteAllocato.nome == "?") {
@@ -183,6 +185,11 @@ function allocaDipendente(e) {
             dipendenteGrabbato = Utils.resetGrab(dipendenteGrabbato);
         }
     });
+}
+
+function eliminaProgetto(event) {
+    Utils.eliminaProgettoByNome(state.listaProgetti, event.target.innerText.trim(), state.listaDipendentiNonAllocati);
+    refreshPage(state);
 }
 
 function salva() {
@@ -265,3 +272,60 @@ document.getElementById("aggiungi-dipendente").addEventListener("click", functio
     aggiungiDipendenteListaDipendenti(dipendente);
     $("#modaleAggiungiDipendente").css({ display: "none" });
 });
+
+
+/* MODALE MODIFICA DIPENDENTI */
+function caricaDipendentiModale() {
+    $("table#tabella-modifica-dipendenti").empty();
+    $("table#tabella-modifica-dipendenti").append(
+        "<tr>" +
+            "<th>#</th>" +
+            "<th>Sigla</th>" +
+            "<th>Nome</th>" +
+            "<th>Cognome</th>" +
+            "<th>Anzianita</th>" +
+            "<th>Appartenenza</th>" +
+        "</tr>"
+    );
+
+    let listaDipendenti = [];
+
+    state.listaDipendentiNonAllocati.forEach(function(dipendente) {
+        if(dipendente.id != -1)
+            listaDipendenti.push(dipendente);
+    });
+
+    state.listaProgetti.forEach(function(progetto) {
+        progetto.listaDipendentiAllocati.forEach(function(dipendenteAllocato) {
+            let index = listaDipendenti.findIndex(dip => dip.id == dipendenteAllocato.id);
+            if(index == -1 && dipendenteAllocato.id != -1)
+                listaDipendenti.push(dipendenteAllocato);
+        });
+    });
+      
+    listaDipendenti.sort(function (dip1, dip2) {
+        if( dip1.cognome < dip2.cognome ) {
+            return -1;
+        }
+        if( dip1.cognome > dip2.cognome ) {
+            return 1;
+        }
+        return 0;
+    });
+
+    let count = 1;
+    listaDipendenti.forEach(function(dipendente){
+        let sigla = dipendente.sigla ? dipendente.sigla : "";
+        $("table#tabella-modifica-dipendenti").append(
+            "<tr>" +
+                "<td>" + count + "</td>" +
+                "<td>" + sigla + "</td>" +
+                "<td>" + dipendente.nome + "</td>" +
+                "<td>" + dipendente.cognome + "</td>" +
+                "<td>" + dipendente.anzianita + "</td>" +
+                "<td>" + dipendente.appartenenza + "</td>" +
+            "</tr>"
+        );
+        count++;
+    });
+}

@@ -157,3 +157,25 @@ div.perc {
     font-size: 12px;
     color: grey;
 }
+
+
+/* MODIFICA DIPENDENTI */
+#modaleModificaDipendenti {
+    margin-top: -50px;
+}
+
+table#tabella-modifica-dipendenti {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+table#tabella-modifica-dipendenti th {
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+}
+
+table#tabella-modifica-dipendenti td {
+    background-color: rgb(202, 202, 202);
+    padding: 10px;
+}
