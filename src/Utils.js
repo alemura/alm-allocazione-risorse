@@ -74,7 +74,7 @@ class Utils {
                 color = 'BF0000';
                 break;
             case "MIDDLE":
-                color = 'BF7100';
+                color = 'FF9700';
                 break;
             case "JUNIOR":
                 color = 'BFBF00';
