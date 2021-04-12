@@ -77,7 +77,7 @@ class Utils {
                 color = 'FF9700';
                 break;
             case "JUNIOR":
-                color = 'BFBF00';
+                color = 'FFFF00';
                 break;
             default:
                 break;
