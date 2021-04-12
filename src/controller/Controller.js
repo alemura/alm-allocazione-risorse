@@ -14,12 +14,16 @@ $(document).on('mousemove', function (e) {
     });
 });
 
-function refreshPage() {
+function refreshPage(data) {
+    state.data = data.data;
+    state.listaDipendentiNonAllocati = data.listaDipendentiNonAllocati;
+    state.listaProgetti = data.listaProgetti;
     $('#date').text(state.data);
     state.listaProgetti.forEach(function (progetto) {
         let htmlDipendentiAllocati = '';
         progetto.listaDipendentiAllocati.forEach(function (dipendente) {
             let borderColor = dipendente.appartenenza == "internal" ? "; border: 3px solid #000" : "; border: 3px solid #00f9ff";
+            dipendente.colore = Utils.getColorFromAnzianita(dipendente.anzianita);
             let style = dipendente.nome == "?" ? "style='border: 3px dashed #000'>" : "style='background-color: #" + dipendente.colore + borderColor + "'>";
             htmlDipendentiAllocati += "<td id='id" + dipendente.id + "'>" +
                 "<div id='id" + dipendente.id + "' class='icona-dipendente' " +
@@ -54,16 +58,14 @@ document.getElementById("carica-file").addEventListener("change", function () {
     reader.onload = readSuccess;
     function readSuccess(evt) {
         let data = JSON.parse(evt.target.result);
-        state.data = data.data;
-        state.listaDipendentiNonAllocati = data.listaDipendentiNonAllocati;
-        state.listaProgetti = data.listaProgetti;
-        refreshPage();
+        refreshPage(data);
     };
     reader.readAsText(file);
 });
 
 function aggiungiDipendenteListaDipendenti(dipendente) {
     let borderColor = dipendente.appartenenza == "internal" ? "; border: 3px solid #000" : "; border: 3px solid #00f9ff";
+    dipendente.colore = Utils.getColorFromAnzianita(dipendente.anzianita);
     let style = dipendente.nome == "?" ? "style='border: 3px dashed #000'" : "style='background-color: #" + dipendente.colore + borderColor + "'";
     $("tr#lista-dipendenti").append(
         "<td id='id" + dipendente.id + "'>" +
