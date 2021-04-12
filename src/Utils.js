@@ -9,13 +9,16 @@ class Utils {
 
     static creaIconaDipendente(dipendente, perc) {
         let matchesNome = dipendente.nome.match(/\b(\w)/g);
-        if (matchesNome == null || matchesNome == "?") {
+        if ((matchesNome == null || matchesNome == "?") && (!dipendente.sigla || dipendente.sigla.trim() == "")) {
             return "?" + "<br><div class='perc'>&nbsp&nbsp&nbsp&nbsp&nbsp</div>";
         }
         let matchesCognome = dipendente.cognome.match(/\b(\w)/g);
-        let siglaNome = matchesNome.join('').toUpperCase();
-        let siglaCognome = matchesCognome.join('').toUpperCase();
-        return siglaNome + siglaCognome + "<br><div class='perc'>" + perc + "%</div>";
+        let siglaNome = matchesNome == null ? "" : matchesNome.join('').toUpperCase();
+        let siglaCognome = matchesCognome == null ? "" : matchesCognome.join('').toUpperCase();
+        if(dipendente.sigla && dipendente.sigla.trim() != "") 
+            return dipendente.sigla.toUpperCase() + "<br><div class='perc'>" + perc + "%</div>";
+        else 
+            return siglaNome + siglaCognome + "<br><div class='perc'>" + perc + "%</div>";
     }
 
     static getDipendenteFromId(listaDipendenti, id) {

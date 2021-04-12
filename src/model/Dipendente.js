@@ -1,5 +1,5 @@
 class Dipendente {
-    constructor(id, nome, cognome, anzianita, colore, perc, appartenenza) {
+    constructor(id, nome, cognome, anzianita, colore, perc, appartenenza, sigla) {
         this.id = id;
         this.nome = nome;
         this.cognome = cognome;
@@ -7,5 +7,6 @@ class Dipendente {
         this.colore = colore;
         this.perc = perc;
         this.appartenenza = appartenenza;
+        this.sigla = sigla;
     }
 }

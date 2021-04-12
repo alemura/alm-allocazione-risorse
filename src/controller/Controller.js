@@ -19,6 +19,8 @@ function refreshPage(data) {
     state.listaDipendentiNonAllocati = data.listaDipendentiNonAllocati;
     state.listaProgetti = data.listaProgetti;
     $('#date').text(state.data);
+    $("table#tabella-allocazioni").empty();
+    $("div#lista-dipendenti").empty();
     state.listaProgetti.forEach(function (progetto) {
         let htmlDipendentiAllocati = '';
         progetto.listaDipendentiAllocati.forEach(function (dipendente) {
@@ -142,7 +144,8 @@ function allocaDipendente(e) {
                 dipendenteGrabbato.anzianita,
                 dipendenteGrabbato.colore,
                 perc,
-                dipendenteGrabbato.appartenenza
+                dipendenteGrabbato.appartenenza,
+                dipendenteGrabbato.sigla
             );
 
             if (dipendenteGrabbato.nome == "?") {
@@ -232,6 +235,7 @@ document.getElementById("aggiungi-dipendente").addEventListener("click", functio
     event.preventDefault();
     let nomeNuovoDipendente = $("#nome-nuovo-dipendente").val().trim();
     let cognomeNuovoDipendente = $("#cognome-nuovo-dipendente").val().trim();
+    let siglaNuovoDipendente = $("#sigla-nuovo-dipendente").val().trim();
     let anzianita = $("#anzianita-nuovo-dipendente").children("option:selected").val();
     let appartenenza = $("#appartenenza-nuovo-dipendente").children("option:selected").val();
     let idDipendente = Utils.getNewIdDipendente(state.listaProgetti, state.listaDipendentiNonAllocati);
@@ -253,7 +257,8 @@ document.getElementById("aggiungi-dipendente").addEventListener("click", functio
         anzianita,
         Utils.getColorFromAnzianita(anzianita),
         100,
-        appartenenza
+        appartenenza,
+        siglaNuovoDipendente
     );
 
     state.listaDipendentiNonAllocati.push(dipendente);
