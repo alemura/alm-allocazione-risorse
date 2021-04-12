@@ -68,13 +68,13 @@ body {
 }
 
 #lista-dipendenti {
-    width: 215px;
-    height: 30px;
+    float: left;
     margin-top: 10px;
-    border: 1px solid #ffad06;
+    display: inline;
 }
 
 div.icona-dipendente {
+    float: left;
     border-radius: 20px;
     text-align: center;
     font-size: 16px;
@@ -97,6 +97,11 @@ div.perc {
     background-color: #fff;
     padding: 2px 4px 2px 4px;
     font-weight: bold;
+}
+
+#tabella-allocazioni {
+    float: left;
+    margin-top: 30px;
 }
 
 #tabella-allocazioni td#nome-progetto {

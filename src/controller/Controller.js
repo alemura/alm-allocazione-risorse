@@ -7,7 +7,7 @@ $(document).on('mousemove', function (e) {
     if (dipendenteGrabbato == null)
         return
 
-    $('tr#lista-dipendenti > td > div#id' + dipendenteGrabbato.id).css({
+    $('div#lista-dipendenti > div#id' + dipendenteGrabbato.id).css({
         left: e.pageX - 40,
         top: e.pageY - 25,
         position: "absolute"
@@ -67,12 +67,10 @@ function aggiungiDipendenteListaDipendenti(dipendente) {
     let borderColor = dipendente.appartenenza == "internal" ? "; border: 3px solid #000" : "; border: 3px solid #00f9ff";
     dipendente.colore = Utils.getColorFromAnzianita(dipendente.anzianita);
     let style = dipendente.nome == "?" ? "style='border: 3px dashed #000'" : "style='background-color: #" + dipendente.colore + borderColor + "'";
-    $("tr#lista-dipendenti").append(
-        "<td id='id" + dipendente.id + "'>" +
+    $("div#lista-dipendenti").append(
         "<div id='id" + dipendente.id + "' class='icona-dipendente' " + style + ">" +
         Utils.creaIconaDipendente(dipendente, dipendente.perc) +
-        "</div>" +
-        "</td>"
+        "</div>"
     );
 }
 
@@ -173,11 +171,11 @@ function allocaDipendente(e) {
             progetto.listaDipendentiAllocati.push(allocationDip);
 
             if (perc == dipendenteGrabbato.perc) {
-                $('tr#lista-dipendenti > td#id' + dipendenteGrabbato.id).remove();
+                $('div#lista-dipendenti > div#id' + dipendenteGrabbato.id).remove();
                 Utils.removeDipendenteFromDipendentiNonAllocati(state.listaDipendentiNonAllocati, dipendenteGrabbato.id);
             } else {
                 dipendenteGrabbato.perc -= perc;
-                $('tr#lista-dipendenti > td > div#id' + dipendenteGrabbato.id + ' > div.perc').text(dipendenteGrabbato.perc + '%');
+                $('div#lista-dipendenti > div#id' + dipendenteGrabbato.id + ' > div.perc').text(dipendenteGrabbato.perc + '%');
             }
             dipendenteGrabbato = Utils.resetGrab(dipendenteGrabbato);
         }
@@ -241,12 +239,10 @@ document.getElementById("aggiungi-dipendente").addEventListener("click", functio
     if (Utils.getDipendenteFromId(state.listaDipendentiNonAllocati, -1) == null) {
         let emptyDipendente = new Dipendente(-1, "?", "?", "", "grey", 10000, "");
         state.listaDipendentiNonAllocati.push(emptyDipendente);
-        $("tr#lista-dipendenti").append(
-            "<td id='id" + emptyDipendente.id + "'>" +
+        $("div#lista-dipendenti").append(
             "<div id='id" + emptyDipendente.id + "' class='icona-dipendente' style='border: 3px dashed #000'>" +
             Utils.creaIconaDipendente(emptyDipendente, emptyDipendente.perc) +
-            "</div>" +
-            "</td>"
+            "</div>"
         );
     }
 

@@ -38,7 +38,7 @@ class Utils {
 
     static aggiornaDipendenteListaDipendenti(dipendente, perc) {
         dipendente.perc = parseInt(dipendente.perc) + parseInt(perc);
-        $('tr#lista-dipendenti > td > div#id' + dipendente.id + ' > div.perc').text(dipendente.perc + "%");
+        $('div#lista-dipendenti > div#id' + dipendente.id + ' > div.perc').text(dipendente.perc + "%");
     }
 
     static removeDipendenteFromProgetto(idDipendente, progetto) {
