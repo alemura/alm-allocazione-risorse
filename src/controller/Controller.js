@@ -247,36 +247,47 @@ function aggiungiProgettoTableAllocazioni(progetto) {
 /* AGGIUNGI DIPENDENTE */
 document.getElementById("aggiungi-dipendente").addEventListener("click", function (event) {
     event.preventDefault();
-    let nomeNuovoDipendente = $("#nome-nuovo-dipendente").val().trim();
-    let cognomeNuovoDipendente = $("#cognome-nuovo-dipendente").val().trim();
-    let siglaNuovoDipendente = $("#sigla-nuovo-dipendente").val().trim();
-    let anzianita = $("#anzianita-nuovo-dipendente").children("option:selected").val();
-    let appartenenza = $("#appartenenza-nuovo-dipendente").children("option:selected").val();
-    let idDipendente = Utils.getNewIdDipendente(state.listaProgetti, state.listaDipendentiNonAllocati);
 
-    if (Utils.getDipendenteFromId(state.listaDipendentiNonAllocati, -1) == null) {
-        let emptyDipendente = new Dipendente(-1, "?", "?", "", "grey", 10000, "");
-        state.listaDipendentiNonAllocati.push(emptyDipendente);
-        $("div#lista-dipendenti").append(
-            "<div id='id" + emptyDipendente.id + "' class='icona-dipendente' style='border: 3px dashed #000'>" +
-            Utils.creaIconaDipendente(emptyDipendente, emptyDipendente.perc) +
-            "</div>"
-        );
+    let area = $("#area-aggiungi-dipendente").val();
+    let idDipendente = "";
+    let emptyDipendente = new Dipendente(-1, "?", "?", "", "grey", 10000, "");
+    if(area == "") {
+        idDipendente = Utils.getNewIdDipendente(state.listaProgetti, state.listaDipendentiNonAllocati);
+        if (Utils.getDipendenteFromId(state.listaDipendentiNonAllocati, -1) == null) {
+            state.listaDipendentiNonAllocati.push(emptyDipendente);
+        }
+    } else if (area == "2") {
+        idDipendente = Utils.getNewIdDipendente(state2.listaProgetti, state2.listaDipendentiNonAllocati);
+        if (Utils.getDipendenteFromId(state2.listaDipendentiNonAllocati, -1) == null) {
+            state2.listaDipendentiNonAllocati.push(emptyDipendente);
+        }
     }
 
+    $("div#lista-dipendenti" + area).append(
+        "<div id='id" + emptyDipendente.id + "' class='icona-dipendente' style='border: 3px dashed #000'>" +
+        Utils.creaIconaDipendente(emptyDipendente, emptyDipendente.perc) +
+        "</div>"
+    );
+
+    let anzianita = $("#anzianita-nuovo-dipendente").children("option:selected").val();
     let dipendente = new Dipendente(
         idDipendente,
-        nomeNuovoDipendente,
-        cognomeNuovoDipendente,
+        $("#nome-nuovo-dipendente").val().trim(),
+        $("#cognome-nuovo-dipendente").val().trim(),
         anzianita,
         Utils.getColorFromAnzianita(anzianita),
         100,
-        appartenenza,
-        siglaNuovoDipendente
+        $("#appartenenza-nuovo-dipendente").children("option:selected").val(),
+        $("#sigla-nuovo-dipendente").val().trim()
     );
 
-    state.listaDipendentiNonAllocati.push(dipendente);
-    aggiungiDipendenteListaDipendenti(dipendente, "lista-dipendenti");
+    if(area == "") {
+        state.listaDipendentiNonAllocati.push(dipendente);
+    } else if (area == "2") {
+        state2.listaDipendentiNonAllocati.push(dipendente);
+    }
+    
+    aggiungiDipendenteListaDipendenti(dipendente, "lista-dipendenti" + area);
     $("#modaleAggiungiDipendente").css({ display: "none" });
 });
 
