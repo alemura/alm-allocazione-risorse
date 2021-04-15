@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>ALM - Allocazione risorse v1.1</title>
+    <title>ALM - Allocazione risorse v1.2</title>
     <link rel="stylesheet" href="style.css">
     <script src="jquery-3.5.1.min.js"></script>
 </head>
@@ -257,18 +257,23 @@
         <div id="modaleModificaDipendenti" class="modal">
 
             <!-- Modal content -->
-            <div class="modal-content">
+            <div class="modal-content" style="display: flex;">
+                <div>
+                    <table id="tabella-modifica-dipendenti">
+                        <tr>
+                            <th>#</th>
+                            <th>Sigla</th>
+                            <th>Nome</th>
+                            <th>Cognome</th>
+                            <th>Anzianita</th>
+                            <th>Appartenenza</th>
+                        </tr>
+                    </table>
+                </div>
+                <div style="width: 100%">
+                    <div id="chartContainer" style="height: 370px; width: 100%; margin-left: 10px;"></div>
+                </div>
                 <span class="close">&times;</span>
-                <table id="tabella-modifica-dipendenti">
-                    <tr>
-                        <th>#</th>
-                        <th>Sigla</th>
-                        <th>Nome</th>
-                        <th>Cognome</th>
-                        <th>Anzianita</th>
-                        <th>Appartenenza</th>
-                    </tr>
-                </table>
             </div>
 
         </div>
@@ -288,5 +293,6 @@
 <script src="src/Utils.js"></script>
 <script src="src/controller/Controller.js"></script>
 <script src="src/modal.js"></script>
+<script src="src/canvasjs-chart.min.js"></script>
 
 </html>

@@ -328,4 +328,59 @@ function caricaDipendentiModale() {
         );
         count++;
     });
+
+    createChart(listaDipendenti);
+}
+
+function createChart(listaDipendenti) {
+    let sizeTirocinanti = listaDipendenti.filter(function (dip) {
+        return dip.anzianita == "tirocinante";
+    }).length;
+    let sizeJunior = listaDipendenti.filter(function (dip) {
+        return dip.anzianita == "junior";
+    }).length;
+    let sizeMiddle = listaDipendenti.filter(function (dip) {
+        return dip.anzianita == "middle";
+    }).length;
+    let sizeSenior = listaDipendenti.filter(function (dip) {
+        return dip.anzianita == "senior";
+    }).length;
+    let tot = sizeTirocinanti + sizeJunior + sizeMiddle + sizeSenior;
+    sizeTirocinanti = Math.round(sizeTirocinanti * 100 / tot);
+    sizeJunior = Math.round(sizeJunior * 100 / tot);
+    sizeMiddle = Math.round(sizeMiddle * 100 / tot);
+    sizeSenior = Math.round(sizeSenior * 100 / tot);
+
+    let chart = new CanvasJS.Chart("chartContainer", {
+        animationEnabled: true,
+        title:{
+            text: "Seniority Dipendenti"
+        },
+        legend:{
+            cursor: "pointer",
+            itemclick: explodePie
+        },
+        data: [{
+            type: "pie",
+            showInLegend: true,
+            toolTipContent: "{name}: <strong>{y}%</strong>",
+            indexLabel: "{name} - {y}%",
+            dataPoints: [
+                { y: sizeTirocinanti, name: "Tirocinanti", color: "#C4C4C4", exploded: false },
+                { y: sizeJunior, name: "Junior", color: "#FFFF00", exploded: false },
+                { y: sizeMiddle, name: "Middle", color: "#FF9700", exploded: false },
+                { y: sizeSenior, name: "Senior", color: "#BF0000", exploded: false }
+            ]
+        }]
+    });
+    chart.render();
+
+    function explodePie (e) {
+        if(typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
+            e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
+        } else {
+            e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
+        }
+        e.chart.render();
+    }
 }
