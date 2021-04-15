@@ -1,9 +1,4 @@
 class Utils {
-    static aggiornaData(e) {
-        let data = e.target.value;
-        $('#date').text(data);
-    }
-
     static creaIconaDipendente(dipendente, perc) {
         let matchesNome = dipendente.nome.match(/\b(\w)/g);
         if ((matchesNome == null || matchesNome == "?") && (!dipendente.sigla || dipendente.sigla.trim() == "")) {

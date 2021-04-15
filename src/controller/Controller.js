@@ -1,24 +1,29 @@
 /* VARIABILI GLOBALI */
 var state = new State();
+var state2 = new State();
 var dipendenteGrabbato = null;
+var dipendenteGrabbato2 = null;
 
 
 $(document).on('mousemove', function (e) {
-    if (dipendenteGrabbato == null)
-        return
-
-    $('div#lista-dipendenti > div#id' + dipendenteGrabbato.id).css({
+    let cssIstructions = {
         left: e.pageX - 40,
-        top: e.pageY - 25,
+        top: e.pageY + 5,
         position: "absolute"
-    });
+    };
+
+    if (dipendenteGrabbato != null) {
+        $('div#lista-dipendenti > div#id' + dipendenteGrabbato.id).css(cssIstructions);
+    } else if (dipendenteGrabbato2 != null) {
+        $('div#lista-dipendenti2 > div#id' + dipendenteGrabbato.id).css(cssIstructions);
+    }    
 });
 
 function refreshPage(data) {
     state.data = data.data;
     state.listaDipendentiNonAllocati = data.listaDipendentiNonAllocati;
     state.listaProgetti = data.listaProgetti;
-    $('#date').text(state.data);
+    $('#data').val(state.data);
     $("table#tabella-allocazioni").empty();
     $("div#lista-dipendenti").empty();
     state.listaProgetti.forEach(function (progetto) {
@@ -44,7 +49,7 @@ function refreshPage(data) {
         );
     });
     state.listaDipendentiNonAllocati.forEach(function (dipendente) {
-        aggiungiDipendenteListaDipendenti(dipendente);
+        aggiungiDipendenteListaDipendenti(dipendente, "lista-dipendenti");
     });
 }
 
@@ -65,11 +70,11 @@ document.getElementById("carica-file").addEventListener("change", function () {
     reader.readAsText(file);
 });
 
-function aggiungiDipendenteListaDipendenti(dipendente) {
+function aggiungiDipendenteListaDipendenti(dipendente, idHtmlListaDipendenti) {
     let borderColor = dipendente.appartenenza == "internal" ? "; border: 3px solid #000" : "; border: 3px solid #00f9ff";
     dipendente.colore = Utils.getColorFromAnzianita(dipendente.anzianita);
     let style = dipendente.nome == "?" ? "style='border: 3px dashed #000'" : "style='background-color: #" + dipendente.colore + borderColor + "'";
-    $("div#lista-dipendenti").append(
+    $("div#" + idHtmlListaDipendenti).append(
         "<div id='id" + dipendente.id + "' class='icona-dipendente' " + style + ">" +
         Utils.creaIconaDipendente(dipendente, dipendente.perc) +
         "</div>"
@@ -98,6 +103,13 @@ $("body").click(function (e) {
     }
 });
 
+$('body').contextmenu(function(e) {
+    e.preventDefault();
+    if (dipendenteGrabbato == null)
+        return;
+    dipendenteGrabbato = Utils.resetGrab(dipendenteGrabbato);
+});
+
 function selezionaDipendenteDaAllocare(e) {
     $('body').css('cursor', 'grabbing');
     dipendenteGrabbato = Utils.getDipendenteFromId(state.listaDipendentiNonAllocati, e.target.id.slice(2, e.target.id.length));
@@ -119,7 +131,7 @@ function rimuoviAllocazioneDipendente(e) {
         if (dipendenteNonAllocato) {
             Utils.aggiornaDipendenteListaDipendenti(dipendenteNonAllocato, dipendenteAllocato.perc);
         } else {
-            aggiungiDipendenteListaDipendenti(dipendenteAllocato);
+            aggiungiDipendenteListaDipendenti(dipendenteAllocato, "lista-dipendenti");
             state.listaDipendentiNonAllocati.push(dipendenteAllocato);
         }
         $(e.target).parents("tr > td").remove();
@@ -209,11 +221,6 @@ function salva() {
     }, 0);
 }
 
-$("#annulla").click(function (e) {
-    if (dipendenteGrabbato == null)
-        return;
-    dipendenteGrabbato = Utils.resetGrab(dipendenteGrabbato);
-});
 
 /* AGGIUNGI PROGETTO */
 document.getElementById("aggiungi-progetto").addEventListener("click", function (event) {
@@ -269,7 +276,7 @@ document.getElementById("aggiungi-dipendente").addEventListener("click", functio
     );
 
     state.listaDipendentiNonAllocati.push(dipendente);
-    aggiungiDipendenteListaDipendenti(dipendente);
+    aggiungiDipendenteListaDipendenti(dipendente, "lista-dipendenti");
     $("#modaleAggiungiDipendente").css({ display: "none" });
 });
 

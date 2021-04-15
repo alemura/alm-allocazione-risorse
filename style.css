@@ -1,11 +1,52 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 body {
     cursor: grab;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#dipendenti {
+    float: left;
+    width: 100%;
+    padding-bottom: 40px;
+    padding-left: 10px;
+}
+
+#allocazioni {
+    float: left;
+    width: 100%;
+    padding-left: 10px;
+}
+
+#div-data {
+    margin-top: 60px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.date {
+    border: none;
+}
+
+.button-add {
+    border: none;
+    background-color: #fff;
+}
+
+button.button-add:hover {
+    color: orange;
 }
 
 .container-left {
@@ -13,8 +54,15 @@ body {
     position: relative;
     background: #fff;
     float: left;
-    width: 50%;
-    margin-top: -150px;
+    width: 49.75%;
+}
+
+.container-middle {
+    height: 1500px;
+    position: relative;
+    background: rgb(77, 77, 77);
+    float: left;
+    width: 0.5%;
 }
 
 .container-right {
@@ -22,54 +70,11 @@ body {
     position: relative;
     background: #fff;
     float: left;
-    width: 50%;
-}
-
-.basic-button {
-    top: 0;
-    left: 0;
-    font-weight: bold;
-    font-size: 11px;
-    width: 120px;
-    height: 40px;
-    background: linear-gradient(to right, #ff105f, #ffad06);
-    transition: .5s;
-    border-radius: 30px;
-    border: 0;
-    outline: none;
-    cursor: pointer;
-}
-
-.basic-button:hover {
-    background: linear-gradient(to right, #ffad06, #ffad06);
-    border: 2px solid #000;
-}
-
-.input-group {
-    top: 180px;
-    position: absolute;
-    transition: .5s;
-}
-
-.submit-btn {
-    width: 85%;
-    padding: 10px 30px;
-    cursor: pointer;
-    display: block;
-    margin: auto;
-    background: linear-gradient(to right, #ff105f, #ffad06);
-    border: 0;
-    outline: none;
-    border-radius: 30px;
-}
-
-#container {
-    left: 50px;
+    width: 49.75%;
 }
 
 #lista-dipendenti {
     float: left;
-    margin-top: 10px;
     display: inline;
 }
 
@@ -101,7 +106,6 @@ div.perc {
 
 #tabella-allocazioni {
     float: left;
-    margin-top: 30px;
 }
 
 #tabella-allocazioni td#nome-progetto {
