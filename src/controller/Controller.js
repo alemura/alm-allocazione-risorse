@@ -206,9 +206,11 @@ function eliminaProgetto(event) {
 
 function salva() {
     let filename = "import_allocazioni_" + Date.now();
-    state.data = $('#date').text();
-    let data = JSON.stringify(state);
-    let file = new Blob([data], { type: 'txt' });
+    state.data = $('#data').val();
+    state2.data = $('#data2').val();
+    let saveData = [state, state2];
+    saveData = JSON.stringify(saveData);
+    let file = new Blob([saveData], { type: 'txt' });
     let a = document.createElement("a");
     let url = URL.createObjectURL(file);
     a.href = url;
@@ -265,17 +267,16 @@ document.getElementById("aggiungi-dipendente").addEventListener("click", functio
 
     $("div#lista-dipendenti" + area).append(
         "<div id='id" + emptyDipendente.id + "' class='icona-dipendente' style='border: 3px dashed #000'>" +
-        Utils.creaIconaDipendente(emptyDipendente, emptyDipendente.perc) +
+            Utils.creaIconaDipendente(emptyDipendente, emptyDipendente.perc) +
         "</div>"
     );
 
-    let anzianita = $("#anzianita-nuovo-dipendente").children("option:selected").val();
     let dipendente = new Dipendente(
         idDipendente,
         $("#nome-nuovo-dipendente").val().trim(),
         $("#cognome-nuovo-dipendente").val().trim(),
-        anzianita,
-        Utils.getColorFromAnzianita(anzianita),
+        $("#anzianita-nuovo-dipendente").children("option:selected").val(),
+        Utils.getColorFromAnzianita($("#anzianita-nuovo-dipendente").children("option:selected").val()),
         100,
         $("#appartenenza-nuovo-dipendente").children("option:selected").val(),
         $("#sigla-nuovo-dipendente").val().trim()
