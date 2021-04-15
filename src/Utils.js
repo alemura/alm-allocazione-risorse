@@ -1,10 +1,7 @@
 class Utils {
     static aggiornaData(e) {
         let data = e.target.value;
-        let d = data.slice(8, 10);
-        let m = data.slice(5, 7);
-        let y = data.slice(0, 4);
-        $('#date').text(d + "/" + m + "/" + y);
+        $('#date').text(data);
     }
 
     static creaIconaDipendente(dipendente, perc) {
