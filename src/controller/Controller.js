@@ -19,14 +19,30 @@ $(document).on('mousemove', function (e) {
     }    
 });
 
-function refreshPage(data) {
-    state.data = data.data;
-    state.listaDipendentiNonAllocati = data.listaDipendentiNonAllocati;
-    state.listaProgetti = data.listaProgetti;
-    $('#data').val(state.data);
+function resetPage() {
     $("table#tabella-allocazioni").empty();
     $("div#lista-dipendenti").empty();
-    state.listaProgetti.forEach(function (progetto) {
+    $("table#tabella-allocazioni2").empty();
+    $("div#lista-dipendenti2").empty();
+}
+
+function refreshPage(data) {
+    state.data = data[0].data;
+    state.listaDipendentiNonAllocati = data[0].listaDipendentiNonAllocati;
+    state.listaProgetti = data[0].listaProgetti;
+    state2.data = data[1].data;
+    state2.listaDipendentiNonAllocati = data[1].listaDipendentiNonAllocati;
+    state2.listaProgetti = data[1].listaProgetti;
+    resetPage();
+    populatePage(state);
+    $('#data').val(state.data);
+    $('#data2').val(state2.data);
+    populatePage(state, "");
+    populatePage(state2, "2");
+}
+
+function populatePage(s, area) {
+    s.listaProgetti.forEach(function (progetto) {
         let htmlDipendentiAllocati = '';
         progetto.listaDipendentiAllocati.forEach(function (dipendente) {
             let borderColor = dipendente.appartenenza == "internal" ? "; border: 3px solid #000" : "; border: 3px solid #00f9ff";
@@ -39,7 +55,7 @@ function refreshPage(data) {
                 "</div>" +
                 "</td>";
         });
-        $("#tabella-allocazioni").append(
+        $("#tabella-allocazioni" + area).append(
             "<tr id='row" + progetto.nome.replace(/\s/g, '') + "'>" +
             "<td id='nome-progetto' style='background-color: " + progetto.colore + "'>&nbsp;&nbsp;" +
             progetto.nome +
@@ -48,8 +64,8 @@ function refreshPage(data) {
             "</tr>"
         );
     });
-    state.listaDipendentiNonAllocati.forEach(function (dipendente) {
-        aggiungiDipendenteListaDipendenti(dipendente, "lista-dipendenti");
+    s.listaDipendentiNonAllocati.forEach(function (dipendente) {
+        aggiungiDipendenteListaDipendenti(dipendente, "lista-dipendenti" + area);
     });
 }
 
