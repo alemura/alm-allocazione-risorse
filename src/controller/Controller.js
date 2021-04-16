@@ -175,7 +175,8 @@ function rimuoviAllocazioneDipendente(e, s, area) {
         }
 
         if (dipendenteNonAllocato) {
-            Utils.aggiornaDipendenteListaDipendenti(dipendenteNonAllocato, dipendenteAllocato.perc);
+            dipendenteNonAllocato.perc = parseInt(dipendenteNonAllocato.perc) + parseInt(dipendenteAllocato.perc);
+            $('div#lista-dipendenti' + area + ' > div#id' + dipendenteNonAllocato.id + ' > div.perc').text(dipendenteNonAllocato.perc + "%");
         } else {
             aggiungiDipendenteListaDipendenti(dipendenteAllocato, "lista-dipendenti" + area);
             s.listaDipendentiNonAllocati.push(dipendenteAllocato);

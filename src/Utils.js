@@ -51,11 +51,6 @@ class Utils {
         return null;
     }
 
-    static aggiornaDipendenteListaDipendenti(dipendente, perc) {
-        dipendente.perc = parseInt(dipendente.perc) + parseInt(perc);
-        $('div#lista-dipendenti > div#id' + dipendente.id + ' > div.perc').text(dipendente.perc + "%");
-    }
-
     static removeDipendenteFromProgetto(idDipendente, progetto) {
         let index = progetto.listaDipendentiAllocati.findIndex(dipendente => dipendente.id == idDipendente);
         progetto.listaDipendentiAllocati.splice(index, 1);
