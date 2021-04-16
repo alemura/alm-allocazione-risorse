@@ -102,11 +102,11 @@ div.perc {
     font-weight: bold;
 }
 
-#tabella-allocazioni {
+.table-allocazioni {
     float: left;
 }
 
-#tabella-allocazioni td#nome-progetto {
+.table-allocazioni td#nome-progetto {
     font-weight: bold;
     border: 1px solid #000;
 }

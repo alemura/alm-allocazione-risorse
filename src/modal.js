@@ -2,7 +2,6 @@
 var modaleAggiungiProgetto = document.getElementById("modaleAggiungiProgetto");
 var modaleAggiungiDipendente = document.getElementById("modaleAggiungiDipendente");
 var modaleModificaDipendenti = document.getElementById("modaleModificaDipendenti");
-var modaleAggiungiProgetto2 = document.getElementById("modaleAggiungiProgetto2");
 
 // Get the button that opens the modal
 var apriModaleAggiungiProgetto = document.getElementById("apriModaleAggiungiProgetto");
@@ -15,10 +14,10 @@ var apriModaleAggiungiDipendente2 = document.getElementById("apriModaleAggiungiD
 var span1 = document.getElementsByClassName("close")[0];
 var span2 = document.getElementsByClassName("close")[1];
 var span3 = document.getElementsByClassName("close")[2];
-var span4 = document.getElementsByClassName("close")[3];
 
 // When the user clicks the button, open the modal 
 apriModaleAggiungiProgetto.onclick = function() {
+  $("#area-aggiungi-progetto").val("");
   modaleAggiungiProgetto.style.display = "block";
 }
 apriModaleAggiungiDipendente.onclick = function() {
@@ -30,7 +29,8 @@ apriModaleModificaDipendenti.onclick = function() {
   modaleModificaDipendenti.style.display = "block";
 }
 apriModaleAggiungiProgetto2.onclick = function() {
-  modaleAggiungiProgetto2.style.display = "block";
+  $("#area-aggiungi-progetto").val("2");
+  modaleAggiungiProgetto.style.display = "block";
 }
 apriModaleAggiungiDipendente2.onclick = function() {
   $("#area-aggiungi-dipendente").val("2");
@@ -47,9 +47,6 @@ span2.onclick = function() {
 span3.onclick = function() {
   modaleModificaDipendenti.style.display = "none";
 }
-span4.onclick = function() {
-  modaleAggiungiProgetto2.style.display = "none";
-}
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
@@ -59,7 +56,5 @@ window.onclick = function(event) {
     modaleAggiungiDipendente.style.display = "none";
   } else if(event.target == modaleModificaDipendenti) {
     modaleModificaDipendenti.style.display = "none";
-  } else if (event.target == modaleAggiungiProgetto2) {
-    modaleAggiungiProgetto2.style.display = "none";
   }
 }
