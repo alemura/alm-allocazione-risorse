@@ -174,10 +174,37 @@ table#tabella-modifica-dipendenti {
 table#tabella-modifica-dipendenti th {
     background-color: #000;
     color: #fff;
-    padding: 10px;
+    padding: 5px;
 }
 
 table#tabella-modifica-dipendenti td {
     background-color: rgb(202, 202, 202);
     padding: 10px;
+}
+
+tr#modifica-dipendente:hover {
+    opacity: 0.5;
+}
+
+.input-none {
+    width: 100%;
+    border:none;
+    background-image:none;
+    background-color:transparent;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.save-button {
+    border: 1px solid #fff;
+    padding: 5px;
+    background: url("img/save.png");
+    background-size: contain;
+}
+
+.save-button:hover {
+    border: 1px solid #000;
+    opacity: 0.5;
+    cursor: pointer;
 }

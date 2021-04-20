@@ -3,6 +3,7 @@ var state = new State();
 var state2 = new State();
 var dipendenteGrabbato = null;
 var dipendenteGrabbato2 = null;
+var listaDipendentiOld = null;
 
 
 $(document).on('mousemove', function (e) {
@@ -370,7 +371,8 @@ function caricaDipendentiModale() {
             "<th>Nome</th>" +
             "<th>Cognome</th>" +
             "<th>Anzianita</th>" +
-            "<th>Appartenenza</th>" +
+            "<th>Appart.</th>" +
+            "<th></th>" +
         "</tr>"
     );
 
@@ -378,21 +380,81 @@ function caricaDipendentiModale() {
     
     let count = 1;
     listaDipendenti.forEach(function(dipendente){
+        dipendente.index = count;
         let sigla = dipendente.sigla ? dipendente.sigla : "";
         $("table#tabella-modifica-dipendenti").append(
-            "<tr>" +
-                "<td>" + count + "</td>" +
-                "<td>" + sigla + "</td>" +
-                "<td>" + dipendente.nome + "</td>" +
-                "<td>" + dipendente.cognome + "</td>" +
-                "<td>" + dipendente.anzianita + "</td>" +
-                "<td>" + dipendente.appartenenza + "</td>" +
+            "<tr id='modifica-dipendente'>" +
+                "<td>"+ dipendente.index +"</td>" +
+                "<td><input class='input-none' value='" + sigla + "'/></td>" +
+                "<td><input class='input-none' value='" + dipendente.nome + "'/></td>" +
+                "<td><input class='input-none' value='" + dipendente.cognome + "'/></td>" +
+                "<td><input class='input-none' value='" + dipendente.anzianita + "'/></td>" +
+                "<td><input class='input-none' value='" + dipendente.appartenenza + "'/></td>" +
+                "<td><input class='save-button' type='button' onclick='salvaDipendente(event)' value='&nbsp;&nbsp;&nbsp;'/></td>" +
             "</tr>"
         );
         count++;
     });
 
     createChart(listaDipendenti);
+    listaDipendentiOld = listaDipendenti;
+}
+
+function salvaDipendente(e) {
+    if(e.target.parentElement.parentElement.id != "modifica-dipendente")
+        return;
+
+    let datiDipendente = e.target.parentElement.parentElement.children;
+    let countIndex = 0;
+    let siglaIndex = 1;
+    let nomeIndex = 2;
+    let cognomeIndex = 3;
+    let anzianitaIndex = 4;
+    let appartenenzaIndex = 5;
+
+    let index = datiDipendente[countIndex].outerText;
+    let sigla = datiDipendente[siglaIndex].children[0].value;
+    let nome = datiDipendente[nomeIndex].children[0].value;
+    let cognome = datiDipendente[cognomeIndex].children[0].value;
+    let anzianita = datiDipendente[anzianitaIndex].children[0].value;
+    let appartenenza = datiDipendente[appartenenzaIndex].children[0].value;
+
+    let d = listaDipendentiOld.find(dip => dip.index == index);
+    let dipendenteOld = new Dipendente(d.id, d.nome, d.cognome, d.anzianita, d.colore, d.perc, d.appartenenza, d.sigla);
+    dipendenteOld.index = d.index;
+    modificaDatiDipendenteNonAllocato(state, index, sigla, nome, cognome, anzianita, appartenenza, dipendenteOld);
+    modificaDatiDipendenteNonAllocato(state2, index, sigla, nome, cognome, anzianita, appartenenza, dipendenteOld);
+    modificaDatiDipendenteAllocato(state, index, sigla, nome, cognome, anzianita, appartenenza, dipendenteOld);
+    modificaDatiDipendenteAllocato(state2, index, sigla, nome, cognome, anzianita, appartenenza, dipendenteOld);
+    refreshPage([state, state2]);
+}
+
+function modificaDatiDipendenteNonAllocato(s, index, sigla, nome, cognome, anzianita, appartenenza, dipendenteOld) {
+    let dipendenteNonAllocato = s.listaDipendentiNonAllocati.find(function(dip) {
+        return dip.nome == dipendenteOld.nome && dip.cognome == dipendenteOld.cognome && dip.sigla == dipendenteOld.sigla;
+    });
+
+    dipendenteNonAllocato.sigla = sigla;
+    dipendenteNonAllocato.nome = nome;
+    dipendenteNonAllocato.cognome = cognome;
+    dipendenteNonAllocato.anzianita = anzianita;
+    dipendenteNonAllocato.appartenenza = appartenenza;
+}
+
+function modificaDatiDipendenteAllocato(s, index, sigla, nome, cognome, anzianita, appartenenza, dipendenteOld) {
+    s.listaProgetti.forEach(function(progetto) {
+        let dipendenteAllocato = progetto.listaDipendentiAllocati.find(function(dip) {
+            return dip.nome == dipendenteOld.nome && dip.cognome == dipendenteOld.cognome && dip.sigla == dipendenteOld.sigla;
+        });
+
+        if(dipendenteAllocato) {
+            dipendenteAllocato.sigla = sigla;
+            dipendenteAllocato.nome = nome;
+            dipendenteAllocato.cognome = cognome;
+            dipendenteAllocato.anzianita = anzianita;
+            dipendenteAllocato.appartenenza = appartenenza;
+        }
+    });
 }
 
 function createChart(listaDipendenti) {
