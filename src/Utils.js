@@ -95,4 +95,62 @@ class Utils {
         
         return color;
     }
+
+    static getListaDipendenti(state, state2) {
+        let listaDipendentiLeft = Utils.getListaDipendentiSingolaArea(state);
+        let listaDipendentiRight = Utils.getListaDipendentiSingolaArea(state2);
+        let listaDipendenti = [];
+
+        if (listaDipendentiLeft.length > listaDipendentiRight.length) {
+            listaDipendenti = listaDipendentiLeft;
+            listaDipendentiRight.forEach(function(dipendente) {
+                let index = listaDipendenti.findIndex(function(dip) {
+                    return dip.nome == dipendente.nome && dip.cognome == dipendente.cognome && dip.sigla == dipendente.sigla;
+                });
+                if(index == -1) {
+                    listaDipendenti.push(dipendente);
+                }
+            });
+        } else {
+            listaDipendenti = listaDipendentiRight;
+            listaDipendentiLeft.forEach(function(dipendente) {
+                let index = listaDipendenti.findIndex(function(dip) {
+                    return dip.nome == dipendente.nome && dip.cognome == dipendente.cognome && dip.sigla == dipendente.sigla;
+                });
+                if(index == -1) {
+                    listaDipendenti.push(dipendente);
+                }
+            });
+        }
+
+        listaDipendenti.sort(function (dip1, dip2) {
+            if( dip1.cognome < dip2.cognome ) {
+                return -1;
+            }
+            if( dip1.cognome > dip2.cognome ) {
+                return 1;
+            }
+            return 0;
+        });
+
+        return listaDipendenti;
+    }
+
+    static getListaDipendentiSingolaArea(state) {
+        let listaDipendenti = [];
+        state.listaDipendentiNonAllocati.forEach(function(dipendente) {
+            if(dipendente.id != -1)
+                listaDipendenti.push(dipendente);
+        });
+    
+        state.listaProgetti.forEach(function(progetto) {
+            progetto.listaDipendentiAllocati.forEach(function(dipendenteAllocato) {
+                let index = listaDipendenti.findIndex(dip => dip.id == dipendenteAllocato.id);
+                if(index == -1 && dipendenteAllocato.id != -1)
+                    listaDipendenti.push(dipendenteAllocato);
+            });
+        });
+          
+        return listaDipendenti;
+    }
 }

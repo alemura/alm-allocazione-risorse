@@ -374,31 +374,8 @@ function caricaDipendentiModale() {
         "</tr>"
     );
 
-    let listaDipendenti = [];
-
-    state.listaDipendentiNonAllocati.forEach(function(dipendente) {
-        if(dipendente.id != -1)
-            listaDipendenti.push(dipendente);
-    });
-
-    state.listaProgetti.forEach(function(progetto) {
-        progetto.listaDipendentiAllocati.forEach(function(dipendenteAllocato) {
-            let index = listaDipendenti.findIndex(dip => dip.id == dipendenteAllocato.id);
-            if(index == -1 && dipendenteAllocato.id != -1)
-                listaDipendenti.push(dipendenteAllocato);
-        });
-    });
-      
-    listaDipendenti.sort(function (dip1, dip2) {
-        if( dip1.cognome < dip2.cognome ) {
-            return -1;
-        }
-        if( dip1.cognome > dip2.cognome ) {
-            return 1;
-        }
-        return 0;
-    });
-
+    let listaDipendenti = Utils.getListaDipendenti(state, state2);
+    
     let count = 1;
     listaDipendenti.forEach(function(dipendente){
         let sigla = dipendente.sigla ? dipendente.sigla : "";
