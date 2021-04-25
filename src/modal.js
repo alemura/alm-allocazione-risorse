@@ -2,6 +2,7 @@
 var modaleAggiungiProgetto = document.getElementById("modaleAggiungiProgetto");
 var modaleAggiungiDipendente = document.getElementById("modaleAggiungiDipendente");
 var modaleModificaDipendenti = document.getElementById("modaleModificaDipendenti");
+var modaleModificaProgetti = document.getElementById("modaleModificaProgetti");
 
 // Get the button that opens the modal
 var apriModaleAggiungiProgetto = document.getElementById("apriModaleAggiungiProgetto");
@@ -9,6 +10,7 @@ var apriModaleAggiungiDipendente = document.getElementById("apriModaleAggiungiDi
 var apriModaleModificaDipendenti = document.getElementById("apriModaleModificaDipendenti");
 var apriModaleAggiungiProgetto2 = document.getElementById("apriModaleAggiungiProgetto2");
 var apriModaleAggiungiDipendente2 = document.getElementById("apriModaleAggiungiDipendente2");
+var apriModaleModificaProgetti = document.getElementById("apriModaleModificaProgetti");
 
 // Get the <span> element that closes the modal
 var span1 = document.getElementsByClassName("close")[0];
@@ -36,6 +38,10 @@ apriModaleAggiungiDipendente2.onclick = function() {
   $("#area-aggiungi-dipendente").val("2");
   modaleAggiungiDipendente.style.display = "block";
 }
+apriModaleModificaProgetti.onclick = function() {
+  console.log("test");
+  modaleModificaProgetti.style.display = "block";
+}
 
 // When the user clicks on <span> (x), close the modal
 span1.onclick = function() {
@@ -56,5 +62,7 @@ window.onclick = function(event) {
     modaleAggiungiDipendente.style.display = "none";
   } else if(event.target == modaleModificaDipendenti) {
     modaleModificaDipendenti.style.display = "none";
+  } else if(event.target == modaleModificaProgetti) {
+    modaleModificaProgetti.style.display = "none";
   }
 }
