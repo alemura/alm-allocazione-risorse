@@ -108,7 +108,8 @@ div.perc {
 
 .table-allocazioni td#nome-progetto {
     font-weight: bold;
-    border: 1px solid #000;
+    border: 2px solid #000;
+    border-radius: 5px;
 }
 
 /* The Modal (background) */
