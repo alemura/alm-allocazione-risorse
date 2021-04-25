@@ -116,6 +116,7 @@ $("#body > div.container-left").click(function (e) {
         selezionaDipendenteDaAllocare(e, "1");
     } else if (dipendenteGrabbato == null && e.target.id.slice(0, 2) == 'id' && $(e.target).parents('table#tabella-allocazioni').length > 0) {
         rimuoviAllocazioneDipendente(e, state, "");
+        selezionaDipendenteDaAllocare(e, "1");
     } else if (dipendenteGrabbato != null) {
         allocaDipendente(e, state, "", dipendenteGrabbato);
     } else if (dipendenteGrabbato == null && e.target.id == "nome-progetto") {
@@ -130,6 +131,7 @@ $("#body > div.container-right").click(function (e) {
         selezionaDipendenteDaAllocare(e, "2");
     } else if (dipendenteGrabbato2 == null && e.target.id.slice(0, 2) == 'id' && $(e.target).parents('table#tabella-allocazioni2').length > 0) {
         rimuoviAllocazioneDipendente(e, state2, "2");
+        selezionaDipendenteDaAllocare(e, "2");
     } else if (dipendenteGrabbato2 != null) {
         allocaDipendente(e, state2, "2", dipendenteGrabbato2);
     } else if (dipendenteGrabbato2 == null && e.target.id == "nome-progetto") {
@@ -163,28 +165,25 @@ function selezionaDipendenteDaAllocare(e, area) {
 }
 
 function rimuoviAllocazioneDipendente(e, s, area) {
-    let flagYesNo = confirm("Vuoi rimuovere l'allocazione?");
-    if (flagYesNo) {
-        let idDipendente = e.target.id.slice(2, e.target.id.length);
-        let progettoSelezionato = Utils.getProgettoByNome(s.listaProgetti, e.target.parentElement.parentElement.id.slice(3));
-        let dipendenteAllocato = Utils.getDipendenteFromId(progettoSelezionato.listaDipendentiAllocati, idDipendente);
-        let dipendenteNonAllocato = Utils.getDipendenteFromId(s.listaDipendentiNonAllocati, idDipendente);
-        if (dipendenteAllocato.nome == "?") {
-            $(e.target).parents("tr > td").remove();
-            Utils.removeDipendenteFromProgetto(idDipendente, progettoSelezionato);
-            return;
-        }
-
-        if (dipendenteNonAllocato) {
-            dipendenteNonAllocato.perc = parseInt(dipendenteNonAllocato.perc) + parseInt(dipendenteAllocato.perc);
-            $('div#lista-dipendenti' + area + ' > div#id' + dipendenteNonAllocato.id + ' > div.perc').text(dipendenteNonAllocato.perc + "%");
-        } else {
-            aggiungiDipendenteListaDipendenti(dipendenteAllocato, "lista-dipendenti" + area);
-            s.listaDipendentiNonAllocati.push(dipendenteAllocato);
-        }
+    let idDipendente = e.target.id.slice(2, e.target.id.length);
+    let progettoSelezionato = Utils.getProgettoByNome(s.listaProgetti, e.target.parentElement.parentElement.id.slice(3));
+    let dipendenteAllocato = Utils.getDipendenteFromId(progettoSelezionato.listaDipendentiAllocati, idDipendente);
+    let dipendenteNonAllocato = Utils.getDipendenteFromId(s.listaDipendentiNonAllocati, idDipendente);
+    if (dipendenteAllocato.nome == "?") {
         $(e.target).parents("tr > td").remove();
         Utils.removeDipendenteFromProgetto(idDipendente, progettoSelezionato);
+        return;
     }
+
+    if (dipendenteNonAllocato) {
+        dipendenteNonAllocato.perc = parseInt(dipendenteNonAllocato.perc) + parseInt(dipendenteAllocato.perc);
+        $('div#lista-dipendenti' + area + ' > div#id' + dipendenteNonAllocato.id + ' > div.perc').text(dipendenteNonAllocato.perc + "%");
+    } else {
+        aggiungiDipendenteListaDipendenti(dipendenteAllocato, "lista-dipendenti" + area);
+        s.listaDipendentiNonAllocati.push(dipendenteAllocato);
+    }
+    $(e.target).parents("tr > td").remove();
+    Utils.removeDipendenteFromProgetto(idDipendente, progettoSelezionato);
 }
 
 function allocaDipendente(e, s, area, dipendenteGrab) {
@@ -195,7 +194,7 @@ function allocaDipendente(e, s, area, dipendenteGrab) {
                 return
 
             let perc = prompt('Inserisci la percentuale allocazione');
-            if (perc == null || perc > 100 || !(/^\d+$/.test(perc))) {
+            if (perc == null || perc > 100 || !(/^\d+$/.test(perc)) || parseInt(perc) > parseInt(dipendenteGrab.perc)) {
                 perc = dipendenteGrab.perc;
             }
 

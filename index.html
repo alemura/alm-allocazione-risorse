@@ -41,13 +41,13 @@
             <input type="text" id="area-aggiungi-progetto" hidden="hidden" value=""/>
 
             <!-- Modal content -->
-            <div class="modal-content">
+            <div class="modal-content" style="width: 40%">
                 <span class="close">&times;</span>
                 <form>
                     <label>Nome progetto:</label><br>
-                    <input type="text" id="nome-nuovo-progetto"><br><br>
+                    <input class="modal-input" type="text" id="nome-nuovo-progetto"><br>
                     <label>Colore:</label><br>
-                    <select name="colori-progetto" id="colore-nuovo-progetto">
+                    <select class="modal-input" name="colori-progetto" id="colore-nuovo-progetto">
                         <option value="Aqua" style="background-color: Aqua">Aqua</option>
                         <option value="Aquamarine" style="background-color: Aquamarine">Aquamarine</option>
                         <option value="Beige" style="background-color: Beige">Beige</option>
@@ -124,8 +124,8 @@
                         <option value="Wheat" style="background-color: Wheat">Wheat</option>
                         <option value="WhiteSmoke" style="background-color: WhiteSmoke">WhiteSmoke</option>
                         <option value="Yellow" style="background-color: Yellow">Yellow</option>
-                    </select><br><br><br>
-                    <input id="aggiungi-progetto" type="submit" value="Aggiungi progetto">
+                    </select><br><br>
+                    <input id="aggiungi-progetto" class="modal-button" type="submit" value="Aggiungi progetto">
                 </form>
             </div>
 
@@ -136,28 +136,28 @@
             <input type="text" id="area-aggiungi-dipendente" hidden="hidden" value=""/>
 
             <!-- Modal content -->
-            <div class="modal-content">
+            <div class="modal-content" style="width: 40%">
                 <span class="close">&times;</span>
                 <form>
                     <label>Nome:</label><br>
-                    <input type="text" id="nome-nuovo-dipendente"><br><br>
+                    <input class="modal-input" type="text" id="nome-nuovo-dipendente"><br>
                     <label>Cognome:</label><br>
-                    <input type="text" id="cognome-nuovo-dipendente"><br><br>
+                    <input class="modal-input" type="text" id="cognome-nuovo-dipendente"><br>
                     <label>Sigla:</label><br>
-                    <input type="text" id="sigla-nuovo-dipendente"><br><br>
-                    <label>Anzianità:</label><br>
-                    <select id="anzianita-nuovo-dipendente">
+                    <input class="modal-input" type="text" id="sigla-nuovo-dipendente"><br>
+                    <label>Anzianit&agrave;:</label><br>
+                    <select class="modal-input" id="anzianita-nuovo-dipendente">
                         <option value="tirocinante">Tirocinante</option>
                         <option value="junior">Junior</option>
                         <option value="middle">Middle</option>
                         <option value="senior">Senior</option>
-                    </select><br><br>
+                    </select><br>
                     <label>Appartenenza:</label><br>
-                    <select id="appartenenza-nuovo-dipendente">
+                    <select class="modal-input" id="appartenenza-nuovo-dipendente">
                         <option value="internal">Internal</option>
                         <option value="external">External</option>
-                    </select><br><br><br>
-                    <input id="aggiungi-dipendente" type="submit" value="Aggiungi dipendente">
+                    </select><br><br>
+                    <input id="aggiungi-dipendente" class="modal-button" type="submit" value="Aggiungi dipendente">
                 </form>
             </div>
 

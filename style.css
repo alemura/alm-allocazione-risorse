@@ -133,6 +133,7 @@ div.perc {
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
 
 /* The Close Button */
@@ -160,6 +161,34 @@ div.perc {
     color: grey;
 }
 
+#modaleAggiungiDipendente {
+    color: #000;
+    font-weight: bold;
+}
+
+#modaleAggiungiProgetto {
+    color: #000;
+    font-weight: bold;
+}
+
+.modal-input {
+    border-radius: 8px;
+    margin-top: 6px;
+    margin-bottom: 15px;
+}
+
+.modal-button {
+    font-weight: bold;
+    border: none;
+    font-size: 20px;
+    background-color: #fff;
+    color: #949494;
+}
+
+.modal-button:hover {
+    color: #000;
+    cursor: pointer;
+}
 
 /* MODIFICA DIPENDENTI */
 #modaleModificaDipendenti {
